@@ -1,0 +1,31 @@
+Primary Colors (Core theme colors):
+
+Blue: #3B82F6 (Vivid Sky Blue for trust, engagement)
+Teal: #14B8A6 (Fresh and energetic for highlights)
+
+
+Secondary Colors (For accents):
+
+Purple: #8B5CF6 (Vibrant and creative for buttons or banners)
+Orange: #F97316 (Energetic and eye-catching for CTA buttons)
+
+
+Backgrounds and Neutrals:
+
+Light Gray: #F3F4F6 (Clean background)
+Dark Gray: #374151 (Text and headers in dark mode)
+White: #FFFFFF (Main background)
+Black: #111827 (For strong text contrasts)
+
+
+Highlight Colors (Optional for alerts or attention):
+
+Green: #10B981 (Success or membership acceptance)
+Red: #EF4444 (Errors or warnings)
+
+
+Example Palette in Use
+Header and Navbar: Blue (#3B82F6) background with white text.
+CTA Buttons: Orange (#F97316) with hover effects.
+Card Backgrounds: Light Gray (#F3F4F6) with teal accents.
+Footer: Dark Gray (#374151) with white text and teal links.
