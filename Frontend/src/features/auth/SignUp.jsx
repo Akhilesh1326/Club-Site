@@ -4,7 +4,7 @@ import { TextField, Button } from '@mui/material';
 const SignUp = () => {
   return (
     <div className='h-screen flex justify-center items-center bg-gradient-to-b from-[#3B82F6] to-[#14B8A6]'>
-      <div className='border-2 border-gray-300 p-8 rounded-md bg-white shadow-lg'>
+      <div className='border-2 border-gray-300 p-8 rounded-md bg-white shadow-lg md:w-[40%]'>
         <h2 className='text-xl font-bold mb-4 text-center text-blue-500 '>Sign Up</h2>
         <form className='flex flex-col space-y-4'>
           {/* Full Name */}
