@@ -1,6 +1,7 @@
 import {useState} from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
 
 const FeatureCard = ({ color, icon, title, description }) => (
     <div className="text-center bg-white shadow-lg p-6 rounded-lg">
@@ -13,6 +14,7 @@ const FeatureCard = ({ color, icon, title, description }) => (
 
 const LandingPage = () => {
     
+  const navigate = useNavigate()
   return (
     <div className="bg-gray-50 text-gray-800 scroll-smooth">
     <Header />
@@ -25,7 +27,7 @@ const LandingPage = () => {
             achievements.
           </p>
           <div className="mt-6 sm:space-x-4 sm:flex sm:justify-center grid grid-cols-1 gap-5 mx-10 sm:mx-0">
-            <a  href="#"  className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">Promote Your Event</a>
+            <a onClick={()=>{navigate('/sign-in')}} href="#"  className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">Promote Your Event</a>
             <a  href="#"  className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">Explore Clubs</a>
             <a  href="#"  className="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">Join a Community</a>
           </div>
