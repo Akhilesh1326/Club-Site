@@ -1,6 +1,8 @@
 import { TextField, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
+  const navigate = useNavigate();
   return (
     <div className='h-screen flex justify-center items-center bg-gradient-to-b from-[#8B5CF6]  to-[#14B8A6]'>
       <div className='border-2 border-gray-300 p-8 rounded-md bg-white shadow-lg md:w-[40%]'>
@@ -53,6 +55,7 @@ const SignIn = () => {
             type="submit"
             variant="contained"
             fullWidth
+            onClick={()=>navigate("/home")}
             
           >
             Sign Up
