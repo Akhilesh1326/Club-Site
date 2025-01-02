@@ -60,9 +60,10 @@ const SignUpRole = () => {
                                 <em>Role</em>
                             </MenuItem>
                             <MenuItem value="Club Member">Club Member</MenuItem>
-                            <MenuItem value="Event Organizer">Event Organizer</MenuItem>
-                            <MenuItem value="General Participant">General Participant</MenuItem>
+                            <MenuItem value="Club Member">Fresher</MenuItem>
                             <MenuItem value="Club Leader/President">Club Leader/President</MenuItem>
+                            <MenuItem value="General Participant">General Participant</MenuItem>
+                            <MenuItem value="Event Organizer">Event Organizer</MenuItem>
                             <MenuItem value="Ambassador/Promoter">Ambassadors/Promoters</MenuItem>
                             <MenuItem value="Mentor/Advisor">Mentors/Advisors</MenuItem>
                         </Select>
