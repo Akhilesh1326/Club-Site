@@ -1,6 +1,8 @@
 package com.example.auth.auth_service.Config;
 
 import org.springframework.context.annotation.Bean;
+import com.example.auth.auth_service.DTO.AuthUserDTO;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,6 +30,8 @@ public class SecurityConfig {
     // Password Encoder Bean
     @Bean
     public PasswordEncoder passwordEncoder() {
+
         return new BCryptPasswordEncoder(); // Using BCrypt for password hashing
     }
+
 }
