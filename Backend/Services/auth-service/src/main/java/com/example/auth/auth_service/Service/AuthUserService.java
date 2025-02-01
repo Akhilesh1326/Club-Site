@@ -20,10 +20,7 @@ public class AuthUserService {
     private PasswordEncoder passwordEncoder;
 
     public Auth_Users register(AuthUserDTO authUserDTO) {
-        // Log the received password for debugging
-        System.out.println("Received password: " + authUserDTO.getPassword());
 
-        // Check if the email is already in use
         if (authUserRepository.findByEmail(authUserDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
