@@ -17,7 +17,7 @@ public class Users {
 
     @Column(name = "joined_at", nullable = false)
     private LocalDateTime joinedAt;
-    
+
     @Column(name = "auth_user_id", nullable = false)
     private Long authUser;
 
