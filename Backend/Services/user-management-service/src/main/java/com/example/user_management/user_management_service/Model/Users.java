@@ -17,10 +17,9 @@ public class Users {
 
     @Column(name = "joined_at", nullable = false)
     private LocalDateTime joinedAt;
-
-    @OneToOne
-    @JoinColumn(name = "auth_user_id", referencedColumnName = "id")
-    private AuthUser authUser;
+    
+    @Column(name = "auth_user_id", nullable = false)
+    private Long authUser;
 
     @Column(name = "profile_picture_url", nullable = true)
     private String profilePictureUrl;
@@ -44,12 +43,14 @@ public class Users {
         this.id = id;
     }
 
-    public AuthUser getAuthUser() {
+    public Long getAuthUser() {
         return authUser;
     }
-    public void setAuthUser(AuthUser AUID){
-        this.authUser = AUID;
+
+    public void setAuthUser(Long authUser) {
+        this.authUser = authUser;
     }
+
     public String getProfilePictureUrl(){
         return this.profilePictureUrl;
     }
