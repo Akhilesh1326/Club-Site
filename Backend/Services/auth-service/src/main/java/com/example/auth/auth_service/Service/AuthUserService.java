@@ -24,9 +24,13 @@ public class AuthUserService {
         if (authUserRepository.findByEmail(authUserDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
+        if(authUserRepository.findByUserName(authUserDTO.getUserName()).isPresent()){
+            throw  new RuntimeException("userName already exists");
+        }
 
         Auth_Users authUsers = new Auth_Users();
         authUsers.setEmail(authUserDTO.getEmail());
+        authUsers.setUserName(authUserDTO.getUserName());
 
         // Log password before encoding to verify its value
         String rawPassword = authUserDTO.getPassword();
@@ -37,18 +41,12 @@ public class AuthUserService {
         System.out.println("Encoded password: " + encodedPassword);
 
         authUsers.setPassword(encodedPassword); // Set the encoded password
-        authUsers.setRole(convertToRoleEnum(authUserDTO.getRole())); // Convert String role to Enum
+
+
         authUsers.setCreatedAt(LocalDateTime.now());
 
         // Save the user to the database
         return authUserRepository.save(authUsers);
     }
 
-    private Auth_Users.Role convertToRoleEnum(String role) {
-        try {
-            return Auth_Users.Role.valueOf(role); // Converts String to Enum (case-sensitive)
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid role: " + role);
-        }
-    }
 }
