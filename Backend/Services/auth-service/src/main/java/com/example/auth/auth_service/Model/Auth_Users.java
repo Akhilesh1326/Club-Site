@@ -11,15 +11,17 @@ public class Auth_Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    @Column(nullable = false)
+    private String userName;
+
+
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
 
     @Column
     private String googleId;
@@ -32,19 +34,12 @@ public class Auth_Users {
     public void onCreate(){
         this.createdAt = LocalDateTime.now();
     }
-    public enum Role{
-        Fresher,
-        Club_Member,
-        Club_Leader,
-        General_Participant,
-        Event_Organizer,
-        Ambassadors,
-        Mentors
-    }
 
-    public long getUserId(){
-        return this.id;
-    }
+    public long getUserId(){return this.id;}
+
+
+    public String getUserName(){return this.userName;}
+    public void setUserName(String userName){this.userName = userName;}
 
     public String getPassword(){ return this.password; }
     public void setPassword(String password){ this.password = password; }
@@ -54,13 +49,6 @@ public class Auth_Users {
     }
     public void setEmail(String email){
         this.email = email;
-    }
-
-    public Role getRole(){
-        return this.role;
-    }
-    public void setRole(Role role){
-        this.role = role;
     }
 
     public String getGoogleId(){
