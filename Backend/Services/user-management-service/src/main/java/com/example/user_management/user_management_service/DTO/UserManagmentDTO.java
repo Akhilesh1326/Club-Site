@@ -1,25 +1,19 @@
 package com.example.user_management.user_management_service.DTO;
 
+import com.example.user_management.user_management_service.Model.Users;
+
+import java.time.LocalDate;
+
 public class UserManagmentDTO {
-    private String name;
-    private Long auth_user;
     private String profile_picture_url;
+    private String firstName;
+    private String lastName;
+    private LocalDate DOB;
+    private String CollegeOrUniversityName;
+    private String role;
+    private Number phoneNumber;
+    private String profilePictureUrl;
 
-
-    public void setName(String name){
-        this.name = name;
-    }
-
-    public String getName(){
-        return name;
-    }
-
-    public void setAuth_user(Long authUser){
-        this.auth_user = authUser;
-    }
-    public Long getAuth_user(){
-        return auth_user;
-    }
 
     public void setProfile_picture_url(String profile_picture_url){
         this.profile_picture_url = profile_picture_url;
@@ -29,11 +23,40 @@ public class UserManagmentDTO {
         return profile_picture_url;
     }
 
+    public String getRole() {
+        return this.role;
+    }
+
+    public String getFirstName(){
+        return this.firstName;
+    }
+
+    public String getLastName(){
+        return this.lastName;
+    }
+
+    public Number getPhoneNumber(){
+        return this.phoneNumber;
+    }
+
+    public LocalDate getDOB(){
+        return this.DOB;
+    }
+
+    public String getCollegeOrUniversityName(){
+        return this.CollegeOrUniversityName;
+    }
+
+
     @Override
     public String toString() {
         return "AuthUserDTO{" +
-                "email='" + name + '\'' +
-                ", auth_user='" + auth_user + '\'' +
+                "firstName='" + firstName + '\'' +
+                "lastName='" + lastName + '\'' +
+                "role='" + role + '\'' +
+                "DOB='" + DOB + '\'' +
+                "phone='" + phoneNumber + '\'' +
+                "Clg or uni='" + CollegeOrUniversityName + '\'' +
                 ", profile_picture_url='" + profile_picture_url + '\'' +
                 '}';
     }
