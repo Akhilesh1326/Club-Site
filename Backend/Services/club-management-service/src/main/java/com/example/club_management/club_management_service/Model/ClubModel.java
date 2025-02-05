@@ -4,26 +4,28 @@ import jakarta.persistence.*;
 import org.hibernate.mapping.List;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "clubs")
 public class ClubModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    private UUID userId;
 
     @Column(nullable = false, unique = true)
-    private String name;
-    private String description;
-    private String logoUrl;
-    private String bannerUrl;
+    private String clubName;
+    private String clubDescription;
+    private String clubLogoUrl;
+    private String clubBannerUrl;
     @Column(nullable = false, unique = true)
     private Category category;
     @Column(nullable = false, unique = false)
-    private String college;
+    private String collegeOfClub;
     @Column(nullable = false)
-    private Visibility visibility;
-    private String founderEmail; // getting from the DB table directly
+    private Visibility clubVisibility;
+    private String clubFounderEmail; // getting from the DB table directly
     @Column(nullable = true)
     private String clubEmail;
     private String socialLinks; // Yet to implement
@@ -34,32 +36,39 @@ public class ClubModel {
     @PrePersist
     public void onClubCreate(){this.clubCreatedAt = LocalDateTime.now();};
 
+    public void setUserId(UUID userId){
+        this.userId = userId;
+    }
+    public UUID getUserId(){
+        return this.userId;
+    }
+
     public void setName(String name){
-        this.name = name;
+        this.clubName = name;
     }
     public String getName(){
-        return this.name;
+        return this.clubName;
     }
 
     public void setDescription(String description){
-        this.description = description;
+        this.clubDescription = description;
     }
     public String getDescription(){
-        return this.description;
+        return this.clubDescription;
     }
 
     public void setLogoUrl(String logoUrl){
-        this.logoUrl = logoUrl;
+        this.clubLogoUrl = logoUrl;
     }
     public String getLogoUrl(){
-        return this.logoUrl;
+        return this.clubLogoUrl;
     }
 
     public void setBannerUrl(String bannerUrl){
-        this.bannerUrl = bannerUrl;
+        this.clubBannerUrl = bannerUrl;
     }
     public String getBannerUrl(){
-        return this.bannerUrl;
+        return this.clubBannerUrl;
     }
 
     public enum Category{
@@ -79,23 +88,24 @@ public class ClubModel {
     }
 
     public void setCollege(String college){
-        this.college = college;
+        this.collegeOfClub = college;
     }
     public String getCollege(){
-        return this.college;
+        return this.collegeOfClub;
     }
 
     public enum Visibility {
         Public,
         Private
     }
+
     public void setVisibility(Visibility visibility)
     {
-        this.visibility = visibility;
+        this.clubVisibility = visibility;
     };
     public Visibility getVisibility()
     {
-        return this.visibility;
+        return this.clubVisibility;
     };
 
     public void setClubEmail(String clubEmail){
@@ -106,10 +116,10 @@ public class ClubModel {
     }
 
     public void setFounderEmail(String founderEmail){
-        this.founderEmail = founderEmail;
+        this.clubFounderEmail = founderEmail;
     }
     public String getFounderEmail(){
-        return this.founderEmail = founderEmail;
+        return this.clubFounderEmail;
     }
 }
 
