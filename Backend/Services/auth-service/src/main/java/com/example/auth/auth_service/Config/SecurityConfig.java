@@ -20,7 +20,7 @@ public class SecurityConfig {
         http
                 .csrf().disable() // Disable CSRF for stateless authentication like JWT
                 .authorizeRequests()
-                .requestMatchers("/api/register", "/api/greet").permitAll() // Public endpoints (updated method)
+                .requestMatchers("/api/auth-service/register", "/api/auth-service/greet").permitAll() // Public endpoints (updated method)
                 .anyRequest().authenticated() // Secure other endpoints
                 .and()
                 .cors(); // Enable CORS globally
