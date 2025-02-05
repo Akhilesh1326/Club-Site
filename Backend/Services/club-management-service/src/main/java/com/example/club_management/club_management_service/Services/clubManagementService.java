@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 @Service
@@ -22,12 +23,14 @@ public class clubManagementService {
     }
 
 
-    public ClubModel createClub(ClubDTO clubDTO){
+    public ClubModel createClub(UUID userId, ClubDTO clubDTO){
         if(clubRepo.findByName(clubDTO.getName()).isPresent()){
             throw new RuntimeException("Name of club is already present");
         }
 
+
         ClubModel clubModel = new ClubModel();
+        clubModel.setUserId(userId);
         clubModel.setName(clubDTO.getName());
         clubModel.setDescription(clubDTO.getDescription());
         clubModel.setLogoUrl(clubDTO.getLogoUrl());
@@ -62,5 +65,13 @@ public class clubManagementService {
 
     public List<ClubModel> getAllClubs() {
         return clubRepo.findAll();
+    }
+
+    public ClubModel getClubById(UUID clubId){
+        return clubRepo.findClubByClubId(clubId);
+    }
+
+    public ClubModel getClubByUserId(UUID userId) {
+        return clubRepo.findClubByUserId(userId);
     }
 }
