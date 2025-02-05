@@ -60,7 +60,7 @@ const SignUpRole = () => {
                                 <em>Role</em>
                             </MenuItem>
                             <MenuItem value="Club Member">Club Member</MenuItem>
-                            <MenuItem value="Club Member">Fresher</MenuItem>
+                            <MenuItem value="Fresher">Fresher</MenuItem>
                             <MenuItem value="Club Leader/President">Club Leader/President</MenuItem>
                             <MenuItem value="General Participant">General Participant</MenuItem>
                             <MenuItem value="Event Organizer">Event Organizer</MenuItem>
