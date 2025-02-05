@@ -12,20 +12,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api")
-public class clubManagementController {
+@RequestMapping("/api/club-management-service")
+public class  clubManagementController {
 
     @Autowired
     private clubManagementService clubService;
 
 
 
-    @PostMapping("/clubs") // Create a new club
-    public ResponseEntity <Map<String, Object>> createClub(ClubDTO clubDTO){
-        ClubModel newClub = clubService.createClub(clubDTO);
+    @PostMapping("/clubs/{userId}") // Create a new club
+    public ResponseEntity <Map<String, Object>> createClub(@RequestParam UUID userId , @RequestBody ClubDTO clubDTO){
+        ClubModel newClub = clubService.createClub(userId, clubDTO);
 
         Map<String, Object> response = new HashMap<>();
         response.put("Name", newClub.getName());
@@ -47,16 +48,21 @@ public class clubManagementController {
         return ResponseEntity.ok(clubs);
     }
 
-//    @GetMapping("/club/:id") //Fetch a specific club by Id
-//    public ResponseEntity<> getClubBYId(){
-//
-//    }
+    @GetMapping("/club/clubId/{clubId}") //Fetch a specific club by Id
+    public ResponseEntity<ClubModel> getClubByClubId(@RequestParam UUID clubId){
+        return ResponseEntity.ok(clubService.getClubById(clubId));
+    }
+
+    @GetMapping("/club/userId/{userId}")
+    public ResponseEntity<ClubModel> getCLubByUserId(@RequestParam UUID userId){
+        return ResponseEntity.ok(clubService.getClubByUserId(userId));
+    }
 //
 //    @PatchMapping("/clubs/:id") //Update club details
 //
 //    @DeleteMapping("/clubs/:id") //Delete a club
 //
 //    @PostMapping("clubs/:id/members") //Add a member to a club
-//
+
 //    @GetMapping("/clubs/:id/members") //Fetch members of a club
 }
