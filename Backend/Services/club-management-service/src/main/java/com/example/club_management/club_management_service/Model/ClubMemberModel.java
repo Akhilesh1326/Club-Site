@@ -28,7 +28,7 @@ public class ClubMemberModel{
         Content_Writer,
         Design_Head,
         Webmaster
-         
+
         }
     public enum Hirarchy{
 
