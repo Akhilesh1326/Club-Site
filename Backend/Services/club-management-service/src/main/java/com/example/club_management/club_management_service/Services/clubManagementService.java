@@ -2,10 +2,12 @@ package com.example.club_management.club_management_service.Services;
 
 
 import com.example.club_management.club_management_service.DTO.ClubDTO;
+import com.example.club_management.club_management_service.DTO.ClubMemberDTO;
 import com.example.club_management.club_management_service.FeignClient.clubServiceClient;
+import com.example.club_management.club_management_service.Model.ClubMemberModel;
 import com.example.club_management.club_management_service.Model.ClubModel;
-import com.example.club_management.club_management_service.Repo.clubManagementRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.club_management.club_management_service.Repo.ClubManagementRepo;
+import com.example.club_management.club_management_service.Repo.ClubMemberRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +17,15 @@ import java.util.UUID;
 
 @Service
 public class clubManagementService {
-    private final clubManagementRepo clubRepo;
+    private final ClubManagementRepo clubRepo;
     private final clubServiceClient clubClient;
-    public clubManagementService(clubManagementRepo clubRepo, clubServiceClient clubClient) {
+    private final ClubMemberRepo clubMemberRepo;
+
+    public clubManagementService(ClubManagementRepo clubRepo, clubServiceClient clubClient, ClubMemberRepo clubMemberRepo) {
         this.clubRepo = clubRepo;
         this.clubClient = clubClient;
+        this.clubMemberRepo = clubMemberRepo;
     }
-
 
     public ClubModel createClub(UUID userId, ClubDTO clubDTO){
         if(clubRepo.findByName(clubDTO.getName()).isPresent()){
@@ -73,5 +77,34 @@ public class clubManagementService {
 
     public ClubModel getClubByUserId(UUID userId) {
         return clubRepo.findClubByUserId(userId);
+    }
+
+    public ClubMemberModel addClubMembers(ClubMemberDTO clubMemberDTO){
+
+
+        ClubMemberModel clubMemberModel = new ClubMemberModel();
+        clubMemberModel.setUserId(clubMemberDTO.getUserId());
+        clubMemberModel.setClubId(clubMemberDTO.getClubId());
+        clubMemberModel.setRole(convertToRole(clubMemberDTO.getRole()));
+        clubMemberModel.setHierarchy(convertToHierarchy(clubMemberDTO.getHierarchy()));
+
+        return clubMemberRepo.save(clubMemberModel);
+
+    }
+
+    private ClubMemberModel.Role convertToRole(String role){
+        try{
+            return ClubMemberModel.Role.valueOf(role);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid Role option = "+role);
+        }
+    }
+
+    private ClubMemberModel.Hierarchy convertToHierarchy(String hierarchy){
+        try{
+            return ClubMemberModel.Hierarchy.valueOf(hierarchy);
+        }catch (IllegalArgumentException e){
+            throw new RuntimeException("Invalid Hierarchy position ");
+        }
     }
 }
