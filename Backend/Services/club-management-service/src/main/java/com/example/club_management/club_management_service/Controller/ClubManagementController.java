@@ -2,6 +2,8 @@ package com.example.club_management.club_management_service.Controller;
 
 
 import com.example.club_management.club_management_service.DTO.ClubDTO;
+import com.example.club_management.club_management_service.DTO.ClubMemberDTO;
+import com.example.club_management.club_management_service.Model.ClubMemberModel;
 import com.example.club_management.club_management_service.Model.ClubModel;
 import com.example.club_management.club_management_service.Services.clubManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ import java.util.UUID;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/club-management-service")
-public class  clubManagementController {
+public class ClubManagementController {
 
     @Autowired
     private clubManagementService clubService;
@@ -62,7 +64,10 @@ public class  clubManagementController {
 //
 //    @DeleteMapping("/clubs/:id") //Delete a club
 //
-//    @PostMapping("clubs/:id/members") //Add a member to a club
+    @PostMapping("clubs/add-members/") //Add a member to a club
+    public ResponseEntity<ClubMemberModel> addNewMemberToClub(@RequestBody ClubMemberDTO clubMemberDTO){
+        return ResponseEntity.ok(clubService.addClubMembers(clubMemberDTO));
+    }
 
 //    @GetMapping("/clubs/:id/members") //Fetch members of a club
 }
