@@ -12,4 +12,6 @@ public interface ClubManagementRepo extends JpaRepository<ClubModel, String> {
     Optional<ClubModel> findByName(String name);
     ClubModel findClubByClubId(UUID id);
     ClubModel findClubByUserId(UUID userId);
+
+    void deleteByClubIdAndUserId(UUID clubId, UUID userId);
 }
