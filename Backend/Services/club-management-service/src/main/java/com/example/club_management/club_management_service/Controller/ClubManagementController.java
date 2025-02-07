@@ -62,8 +62,11 @@ public class ClubManagementController {
 //
 //    @PatchMapping("/clubs/:id") //Update club details
 //
-//    @DeleteMapping("/clubs/:id") //Delete a club
-//
+    @DeleteMapping("/clubs") //Delete a club
+    public ResponseEntity<String> deleteClub(@RequestBody UUID userId, UUID clubId){
+        return ResponseEntity.ok(clubService.deleteClub(userId, clubId));
+    }
+
     @PostMapping("clubs/add-members/") //Add a member to a club
     public ResponseEntity<ClubMemberModel> addNewMemberToClub(@RequestBody ClubMemberDTO clubMemberDTO){
         return ResponseEntity.ok(clubService.addClubMembers(clubMemberDTO));
