@@ -1,15 +1,15 @@
 package com.example.club_management.club_management_service.DTO;
 
 public class ClubDTO {
-    String name;
-    String description;
-    String logoUrl;
-    String bannerUrl;
-    String category;
-    String college;
-    String visibility;
-    String founderEmail;
-    String clubEmail;
+    private String name;
+    private String description;
+    private String logoUrl;
+    private String bannerUrl;
+    private String category;
+    private String college;
+    private String visibility;
+    private String founderEmail;
+    private String clubEmail;
 
     public void setName (String name){
         this.name = name;
