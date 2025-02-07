@@ -66,6 +66,10 @@ public class clubManagementService {
             throw new RuntimeException("Invalid visibility option: "+visibility);
         }
     }
+    public String deleteClub(UUID userId, UUID clubId) {
+        clubRepo.deleteByClubIdAndUserId(clubId, userId);
+        return "Deleted Successfully";
+    }
 
     public List<ClubModel> getAllClubs() {
         return clubRepo.findAll();
@@ -107,4 +111,6 @@ public class clubManagementService {
             throw new RuntimeException("Invalid Hierarchy position ");
         }
     }
+
+
 }
