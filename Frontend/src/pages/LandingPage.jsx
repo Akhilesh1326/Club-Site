@@ -2,6 +2,7 @@ import {useState} from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
+import MouseEffect from "../components/MouseMoveEffect";
 
 const FeatureCard = ({ color, icon, title, description }) => (
     <div className="text-center bg-white shadow-lg p-6 rounded-lg">
@@ -17,6 +18,7 @@ const LandingPage = () => {
   const navigate = useNavigate()
   return (
     <div className="bg-gray-50 text-gray-800 scroll-smooth">
+      <MouseEffect/>
     <Header />
 
       <section className="bg-gradient-to-r from-blue-500 to-teal-500 text-white py-20">
