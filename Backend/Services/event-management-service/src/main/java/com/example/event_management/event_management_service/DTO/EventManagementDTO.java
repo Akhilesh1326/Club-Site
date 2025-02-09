@@ -16,7 +16,7 @@ public class EventManagementDTO {
     private String organizerId;
     private String clubId;
     private String registrationRequired;
-    private Integer maxParticipants;
+    private String maxParticipants;
 
     public void setTitle (String title){
         this.title  = title;
@@ -101,11 +101,11 @@ public class EventManagementDTO {
         return this.registrationRequired;
     }
 
-    public void setMaxParticipants (Integer maxParticipants){
+    public void setMaxParticipants (String maxParticipants){
         this.maxParticipants  =  maxParticipants;
     }
 
-    public Integer getMaxParticipants(){
+    public String getMaxParticipants(){
         return this.maxParticipants;
     }
 
