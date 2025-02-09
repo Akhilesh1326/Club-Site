@@ -9,6 +9,9 @@ import com.example.event_management.event_management_service.Repo.EventManagemen
 import com.example.event_management.event_management_service.Repo.EventParticipantsRepo;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 public class EventManagementService {
     private final EventManagementRepo eventManagementRepo;
@@ -20,11 +23,49 @@ public class EventManagementService {
     }
 
     public EventManagementModel createEvent(EventManagementDTO eventManagementDTO){
+        EventManagementModel eventManagementModel = new EventManagementModel();
+        eventManagementModel.setTitle(eventManagementDTO.getTitle());
+        eventManagementModel.setDescription(eventManagementDTO.getDescription());
+        eventManagementModel.setCategory(convertToCategory(eventManagementDTO.getCategory()));
+        eventManagementModel.setStartTime(eventManagementDTO.getStartTime());
+        eventManagementModel.setEndTime(eventManagementDTO.getEndTime());
+        eventManagementModel.setLocation(eventManagementDTO.getLocation());
+        eventManagementModel.setOrganizerId(convertToUUID(eventManagementDTO.getOrganizerId()));
+        eventManagementModel.setClubId(convertToUUID(eventManagementDTO.getClubId()));
+        eventManagementModel.setRegistrationRequired(convertToBoolean(eventManagementDTO.getRegistrationRequired()));
+        eventManagementModel.setMaxParticipants(convertToInteger(eventManagementDTO.getMaxParticipants()));
+
+        return eventManagementRepo.save(eventManagementModel);
+    }
+
+    public List<EventManagementModel> getAllEvents(){
+        return eventManagementRepo.findAll();
+    }
+
+    public 
 
 
-        return EventManagementRepo.save();
+
+    private EventManagementModel.Category convertToCategory(String category){
+        try{
+            return EventManagementModel.Category.valueOf(category);
+        }catch (IllegalArgumentException e)
+        {
+            throw new RuntimeException("Invalid Category");
+        }
+    }
+    private UUID convertToUUID(String id){
+        return UUID.fromString(id);
+    }
+    private Boolean convertToBoolean(String data){
+        return Boolean.parseBoolean(data);
+    }
+    private Integer convertToInteger(String val){
+        return Integer.parseInt(val);
     }
 
 
-
+    public List<EventManagementModel> getEventByCategory(String category) {
+        return EventManagementRepo.findByCategory(category);
+    }
 }
