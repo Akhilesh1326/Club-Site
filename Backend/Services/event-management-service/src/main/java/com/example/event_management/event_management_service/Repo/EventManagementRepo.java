@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface EventManagementRepo extends JpaRepository<EventManagementModel, UUID> {
     List<EventManagementModel> findByClubId(UUID clubId);
+
 }
