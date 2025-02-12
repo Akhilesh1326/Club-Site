@@ -1,14 +1,12 @@
-"use client"
-
-import React from "react";
 import Typography from "@mui/material/Typography";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "@mui/material/Link";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import CardActionArea from "@mui/material/CardActionArea";
 import Grid from "@mui/material/Grid";
+
+import HomeFooter from "../components/HomeFooter";
+import HomeHeader from "../components/HomeHeader";
 
 function handleClick(event) {
   event.preventDefault();
@@ -56,18 +54,8 @@ const clubs = [
 
 export default function ExplorePage() {
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div role="presentation" onClick={handleClick} className="mb-6">
-        <Breadcrumbs aria-label="breadcrumb">
-          <Link underline="hover" color="inherit" href="/">
-            ClubConnect
-          </Link>
-          <Link underline="hover" color="inherit" href="/">
-            Home
-          </Link>
-          <Typography color="text.primary">Explore</Typography>
-        </Breadcrumbs>
-      </div>
+    <div className="max-w-6xl mx-auto px-4 ">
+      <HomeHeader/>
 
       <Typography variant="h4" component="h1" gutterBottom>
         Explore Clubs
@@ -92,6 +80,8 @@ export default function ExplorePage() {
           </Grid>
         ))}
       </Grid>
+
+      <HomeFooter/>
     </div>
   );
 }
