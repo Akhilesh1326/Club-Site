@@ -8,8 +8,8 @@ const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <nav className="bg-blue-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav className="bg-sky-600 bg-gradient-to-r from-blue-500 via-sky-500 to-teal-500">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <a href="#" className="text-white text-2xl font-bold">
