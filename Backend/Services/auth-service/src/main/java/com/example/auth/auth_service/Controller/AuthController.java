@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -36,26 +37,39 @@ public class AuthController {
 
         Auth_Users registeredUser = authUserSerivce.register(authUserDTO);
 
-
         // Create a response map to send back necessary details
         Map<String, Object> response = new HashMap<>();
         response.put("id", registeredUser.getUserId());
+        response.put("userName ", registeredUser.getUserName());
         response.put("email", registeredUser.getEmail());
         response.put("password", registeredUser.getPassword());
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/email")
-    public ResponseEntity<String> getEmailById(@RequestParam Long id) {
-        // Call the repository or service method to fetch the email by ID
-        Optional<Auth_Users> user = authUserRepository.findById(id);
+    @GetMapping("/auth-user/id/{id}")
+    public ResponseEntity<String> getUserById(@PathVariable UUID id) {
+        System.out.println("Hello from get");
+        Optional<Auth_Users> user = authUserSerivce.getUserById(id);
+        System.out.println(user);
 
         if (user.isPresent()) {
-            return ResponseEntity.ok(user.get().getEmail());  // Return email if user exists
+            return ResponseEntity.ok("Username = "+user.get().getUserName() +
+                                            "\nEmail = "+user.get().getEmail());  // Return email if user exists
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
     }
+    @GetMapping("/auth-user/name/{name}")
+    public ResponseEntity<String> getUserByName(@PathVariable String name){
+        Optional<Auth_Users> user = authUserSerivce.getUserByUserName(name);
+        if(user.isPresent()){
+            return ResponseEntity.ok("Username = "+user.get().getUserName() +
+                    "\nEmail = "+user.get().getEmail());
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
 
+        }
+    }
 
 }
