@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -41,12 +42,17 @@ public class AuthUserService {
         System.out.println("Encoded password: " + encodedPassword);
 
         authUsers.setPassword(encodedPassword); // Set the encoded password
-
-
         authUsers.setCreatedAt(LocalDateTime.now());
 
         // Save the user to the database
         return authUserRepository.save(authUsers);
     }
 
+    public Optional<Auth_Users> getUserById(UUID id){
+        return authUserRepository.findUserById(id);
+    }
+
+    public Optional<Auth_Users> getUserByUserName(String name) {
+        return authUserRepository.findByUserName(name);
+    }
 }
