@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import com.example.auth.auth_service.DTO.AuthUserDTO;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,7 +21,8 @@ public class SecurityConfig {
         http
                 .csrf().disable() // Disable CSRF for stateless authentication like JWT
                 .authorizeRequests()
-                .requestMatchers("/api/auth-service/register", "/api/auth-service/greet").permitAll() // Public endpoints (updated method)
+                .requestMatchers("/api/auth-service/register", "/api/auth-service/greet", "/api/auth-service/auth-user/id/**", "/api/auth-service/auth-user/name/**").permitAll() // Public endpoints (updated method)
+                .requestMatchers(HttpMethod.GET).permitAll()
                 .anyRequest().authenticated() // Secure other endpoints
                 .and()
                 .cors(); // Enable CORS globally
