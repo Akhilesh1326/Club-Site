@@ -1,6 +1,3 @@
-"use client"
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 
 const data = [
@@ -12,13 +9,13 @@ const data = [
   { name: "Jun", total: 180 },
 ]
 
-export function AnalyticsSection() {
+const AnalyticsSection = () => {
   return (
-    <Card className="col-span-4">
-      <CardHeader>
-        <CardTitle>Monthly Member Activity</CardTitle>
-      </CardHeader>
-      <CardContent className="pl-2">
+    <div className="col-span-4 bg-white shadow-md rounded-2xl p-4">
+      <div className="mb-4">
+        <h2 className="text-xl font-bold text-gray-800">Monthly Member Activity</h2>
+      </div>
+      <div className="pl-2">
         <ResponsiveContainer width="100%" height={350}>
           <BarChart data={data}>
             <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
@@ -32,8 +29,9 @@ export function AnalyticsSection() {
             <Bar dataKey="total" fill="#adfa1d" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
 
+export default AnalyticsSection
