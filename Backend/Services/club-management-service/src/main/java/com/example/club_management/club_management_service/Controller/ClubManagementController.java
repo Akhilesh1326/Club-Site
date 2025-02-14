@@ -6,31 +6,63 @@ import com.example.club_management.club_management_service.DTO.ClubMemberDTO;
 import com.example.club_management.club_management_service.Model.ClubMemberModel;
 import com.example.club_management.club_management_service.Model.ClubModel;
 import com.example.club_management.club_management_service.Services.clubManagementService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/api/club-management-service")
 public class ClubManagementController {
 
-    @Autowired
-    private clubManagementService clubService;
+    private final clubManagementService clubService;
+    private final HttpMessageConverters messageConverters;
+
+    public ClubManagementController(clubManagementService clubService, HttpMessageConverters messageConverters){
+        this.clubService = clubService;
+        this.messageConverters = messageConverters;
+    }
 
 
 
     @PostMapping("/clubs/{userId}") // Create a new club
-    public ResponseEntity <Map<String, Object>> createClub(@RequestParam UUID userId , @RequestBody ClubDTO clubDTO){
-        ClubModel newClub = clubService.createClub(userId, clubDTO);
+    public ResponseEntity <Map<String, Object>> createClub(@PathVariable UUID userId , @RequestBody ClubDTO clubDTO){
+        System.out.println("Club name"+clubDTO.getName());
+        System.out.println("Club dec" +clubDTO.getDescription());
+        System.out.println("Club cat"+clubDTO.getCategory());
+        System.out.println("Club college "+clubDTO.getCollege());
+        System.out.println("Club logo "+clubDTO.getLogoUrl());
+        System.out.println("Club banner "+clubDTO.getBannerUrl());
+        System.out.println("Club visible "+clubDTO.getVisibility());
+        System.out.println("Club foundemail "+clubDTO.getFounderEmail());
 
         Map<String, Object> response = new HashMap<>();
+
+        if(clubDTO.getName() == null || clubDTO.getName().trim().isEmpty()){
+            response.put("error", "Club name is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if(clubDTO.getDescription() == null || clubDTO.getDescription().trim().isEmpty()){
+            response.put("error", "Club Description is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if(clubDTO.getCategory() == null || clubDTO.getCategory().trim().isEmpty()){
+            response.put("error", "Club category is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if(clubDTO.getCollege() == null || clubDTO.getCollege().trim().isEmpty()){
+            response.put("error", "Club's College name is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        ClubModel newClub = clubService.createClub(userId, clubDTO);
+
         response.put("Name", newClub.getName());
         response.put("Description", newClub.getDescription());
         response.put("LogoUrl", newClub.getLogoUrl());
@@ -50,18 +82,41 @@ public class ClubManagementController {
         return ResponseEntity.ok(clubs);
     }
 
-    @GetMapping("/club/clubId/{clubId}") //Fetch a specific club by Id
-    public ResponseEntity<ClubModel> getClubByClubId(@RequestParam UUID clubId){
-        return ResponseEntity.ok(clubService.getClubById(clubId));
+    @GetMapping("/clubs/clubId/{clubId}") //Fetch a specific club by id
+    public ResponseEntity<Optional<ClubModel>> getClubByClubId(@PathVariable UUID clubId){
+        Optional<ClubModel> club = clubService.getClubById(clubId);
+        if(club.isPresent()){
+            return ResponseEntity.ok(club);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Optional.empty());
+        }
     }
 
-    @GetMapping("/club/userId/{userId}")
-    public ResponseEntity<ClubModel> getCLubByUserId(@RequestParam UUID userId){
-        return ResponseEntity.ok(clubService.getClubByUserId(userId));
+    @GetMapping("/clubs/user/{userId}") // Updated endpoint path for clarity
+    public ResponseEntity<List<ClubModel>> getClubsByUserId(@PathVariable UUID userId) {
+        List<ClubModel> clubs = clubService.getClubsByUserId(userId);
+
+        if (clubs.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        }
+        return ResponseEntity.ok(clubs);
     }
-//
+
+
+    @GetMapping("/clubs/club-name/{name}")
+    public ResponseEntity<Optional<ClubModel>> getClubByName(@PathVariable String name){
+        Optional<ClubModel> club = clubService.getClubByName(name);
+        if(club.isPresent()){
+            return ResponseEntity.ok(club);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Optional.empty());
+        }
+    }
+
 //    @PatchMapping("/clubs/:id") //Update club details
-//
+
     @DeleteMapping("/clubs") //Delete a club
     public ResponseEntity<String> deleteClub(@RequestBody UUID userId, UUID clubId){
         return ResponseEntity.ok(clubService.deleteClub(userId, clubId));
