@@ -14,7 +14,7 @@ const HomeHeader = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/profile" className="text-white hover:text-gray-200">
+                <Link to="/club-leader-dashboard" className="text-white hover:text-gray-200">
                   <User className="w-6 h-6" />
                   <span className="sr-only">Profile</span>
                 </Link>
