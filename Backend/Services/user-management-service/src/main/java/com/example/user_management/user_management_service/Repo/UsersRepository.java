@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, Long> {
-    Optional<Users> findByName(String name); // Custom query to find a user by name
+public interface UsersRepository extends JpaRepository<Users, UUID> {
+//    Optional<Users> findByName(String name); // Custom query to find a user by name
 
-    Users getByUserId(UUID userId);
+    Optional<Users> findUsersById(UUID id);
 }
