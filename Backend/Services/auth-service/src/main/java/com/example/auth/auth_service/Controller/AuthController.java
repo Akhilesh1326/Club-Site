@@ -7,7 +7,6 @@ import com.example.auth.auth_service.Service.AuthUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -51,7 +50,6 @@ public class AuthController {
         System.out.println("Hello from get");
         Optional<Auth_Users> user = authUserSerivce.getUserById(id);
         System.out.println(user);
-
         if (user.isPresent()) {
             return ResponseEntity.ok("Username = "+user.get().getUserName() +
                                             "\nEmail = "+user.get().getEmail());  // Return email if user exists
@@ -59,6 +57,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
     }
+
     @GetMapping("/auth-user/name/{name}")
     public ResponseEntity<String> getUserByName(@PathVariable String name){
         Optional<Auth_Users> user = authUserSerivce.getUserByUserName(name);
