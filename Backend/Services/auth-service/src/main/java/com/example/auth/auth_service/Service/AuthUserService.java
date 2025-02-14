@@ -1,6 +1,8 @@
 package com.example.auth.auth_service.Service;
 
 
+import com.example.auth.auth_service.CustomException.EmailAlreadyExistsException;
+import com.example.auth.auth_service.CustomException.UserNameAlreadyExistsException;
 import com.example.auth.auth_service.DTO.AuthUserDTO;
 import com.example.auth.auth_service.Model.Auth_Users;
 import com.example.auth.auth_service.Repo.AuthUserRepository;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
 
 
 @Service
@@ -23,11 +26,13 @@ public class AuthUserService {
     public Auth_Users register(AuthUserDTO authUserDTO) {
 
         if (authUserRepository.findByEmail(authUserDTO.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new EmailAlreadyExistsException("Email already exists");
         }
-        if(authUserRepository.findByUserName(authUserDTO.getUserName()).isPresent()){
-            throw  new RuntimeException("userName already exists");
+
+        if(authUserRepository.findByUserName(authUserDTO.getUserName()).isPresent()) {
+            throw new UserNameAlreadyExistsException("Username already exists");
         }
+
 
         Auth_Users authUsers = new Auth_Users();
         authUsers.setEmail(authUserDTO.getEmail());
