@@ -1,6 +1,7 @@
 package com.example.club_management.club_management_service.Model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.mapping.List;
 
 import java.time.LocalDateTime;
@@ -10,22 +11,34 @@ import java.util.UUID;
 @Table(name = "clubs")
 public class ClubModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(columnDefinition = "UUID")
     private UUID id;
     private UUID userId;
 
     @Column(nullable = false, unique = true)
     private String clubName;
+
     private String clubDescription;
+
     private String clubLogoUrl;
+
     private String clubBannerUrl;
-    @Column(nullable = false, unique = true)
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Category category;
+
     @Column(nullable = false, unique = false)
     private String collegeOfClub;
+
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Visibility clubVisibility;
-    private String clubFounderEmail; // getting from the DB table directly
+
+    private String clubFounderEmail;
+
     @Column(nullable = true)
     private String clubEmail;
     private String socialLinks; // Yet to implement
@@ -35,6 +48,10 @@ public class ClubModel {
 
     @PrePersist
     public void onClubCreate(){this.clubCreatedAt = LocalDateTime.now();};
+
+    public UUID getId(){
+        return this.id;
+    }
 
     public void setUserId(UUID userId){
         this.userId = userId;
