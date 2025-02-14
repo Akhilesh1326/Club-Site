@@ -3,7 +3,7 @@ package com.example.club_management.club_management_service.Services;
 
 import com.example.club_management.club_management_service.DTO.ClubDTO;
 import com.example.club_management.club_management_service.DTO.ClubMemberDTO;
-import com.example.club_management.club_management_service.FeignClient.clubServiceClient;
+//import com.example.club_management.club_management_service.FeignClient.clubServiceClient;
 import com.example.club_management.club_management_service.Model.ClubMemberModel;
 import com.example.club_management.club_management_service.Model.ClubModel;
 import com.example.club_management.club_management_service.Repo.ClubManagementRepo;
@@ -12,29 +12,31 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 
 @Service
 public class clubManagementService {
     private final ClubManagementRepo clubRepo;
-    private final clubServiceClient clubClient;
+//    private final clubServiceClient clubClient;
     private final ClubMemberRepo clubMemberRepo;
 
-    public clubManagementService(ClubManagementRepo clubRepo, clubServiceClient clubClient, ClubMemberRepo clubMemberRepo) {
+    public clubManagementService(ClubManagementRepo clubRepo, ClubMemberRepo clubMemberRepo) {
         this.clubRepo = clubRepo;
-        this.clubClient = clubClient;
         this.clubMemberRepo = clubMemberRepo;
     }
 
     public ClubModel createClub(UUID userId, ClubDTO clubDTO){
-        if(clubRepo.findByName(clubDTO.getName()).isPresent()){
+        if(clubRepo.findByClubName(clubDTO.getName()).isPresent()){
             throw new RuntimeException("Name of club is already present");
         }
 
 
         ClubModel clubModel = new ClubModel();
+
         clubModel.setUserId(userId);
+
         clubModel.setName(clubDTO.getName());
         clubModel.setDescription(clubDTO.getDescription());
         clubModel.setLogoUrl(clubDTO.getLogoUrl());
@@ -42,10 +44,7 @@ public class clubManagementService {
         clubModel.setCategory(convertToCategory(clubDTO.getCategory()));
         clubModel.setCollege(clubDTO.getCollege());
         clubModel.setVisibility(convertToVisibility(clubDTO.getVisibility()));
-
-        Map<String, Object> authResponse = clubClient.getAuthEmail(clubDTO.getFounderEmail());
-        String founderEmail = (String) authResponse.get("auth-user");
-        clubModel.setFounderEmail(founderEmail);
+        clubModel.setFounderEmail(clubDTO.getFounderEmail());
         clubModel.setClubEmail(clubDTO.getClubEmail());
 
         return clubRepo.save(clubModel);
@@ -67,7 +66,7 @@ public class clubManagementService {
         }
     }
     public String deleteClub(UUID userId, UUID clubId) {
-        clubRepo.deleteByClubIdAndUserId(clubId, userId);
+        clubRepo.deleteByIdAndUserId(clubId, userId);
         return "Deleted Successfully";
     }
 
@@ -75,12 +74,16 @@ public class clubManagementService {
         return clubRepo.findAll();
     }
 
-    public ClubModel getClubById(UUID clubId){
-        return clubRepo.findClubByClubId(clubId);
+    public Optional<ClubModel> getClubById(UUID clubId){
+        return clubRepo.findClubById(clubId);
     }
 
-    public ClubModel getClubByUserId(UUID userId) {
+    public List<ClubModel> getClubsByUserId(UUID userId) {
         return clubRepo.findClubByUserId(userId);
+    }
+
+    public Optional<ClubModel> getClubByName(String name){
+        return clubRepo.findByClubName(name);
     }
 
     public ClubMemberModel addClubMembers(ClubMemberDTO clubMemberDTO){
