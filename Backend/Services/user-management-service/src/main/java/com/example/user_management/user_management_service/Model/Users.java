@@ -2,7 +2,6 @@ package com.example.user_management.user_management_service.Model;
 
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -23,11 +22,12 @@ public class Users {
     @Column(nullable = false)
     private LocalDate DOB;
 
-    private String CollegeOrUniversityName;
+    private String collegeOrUniversityName;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
-    private Number phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "joined_at", nullable = false)
     private LocalDateTime joinedAt;
@@ -60,10 +60,10 @@ public class Users {
     }
 
     public void setCollegeName(String collegeName) {
-        this.CollegeOrUniversityName = collegeName;
+        this.collegeOrUniversityName = collegeName;
     }
     public String getCollegeName(){
-        return this.CollegeOrUniversityName;
+        return this.collegeOrUniversityName;
     }
 
     public void setDOB(LocalDate DOB) {
@@ -73,10 +73,10 @@ public class Users {
         return this.DOB;
     }
 
-    public void setPhoneNumber(Number phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-    public Number getPhoneNumber() {
+    public String getPhoneNumber() {
         return this.phoneNumber;
     }
 
