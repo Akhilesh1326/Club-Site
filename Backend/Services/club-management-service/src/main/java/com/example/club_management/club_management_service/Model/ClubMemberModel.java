@@ -1,5 +1,7 @@
 package com.example.club_management.club_management_service.Model;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -19,6 +21,7 @@ public class ClubMemberModel {
     private UUID clubId;
 
     @Field("role")
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @Field("hierarchy")
