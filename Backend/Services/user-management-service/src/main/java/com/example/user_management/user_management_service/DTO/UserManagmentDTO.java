@@ -1,18 +1,19 @@
 package com.example.user_management.user_management_service.DTO;
 
 import com.example.user_management.user_management_service.Model.Users;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 
 public class UserManagmentDTO {
-    private String profile_picture_url;
     private String firstName;
     private String lastName;
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate DOB;
-    private String CollegeOrUniversityName;
+    private String collegeOrUniversityName;
     private String role;
-    private Number phoneNumber;
-    private String profilePictureUrl;
+    private String phoneNumber;
+    private String profile_picture_url;
 
 
     public void setProfile_picture_url(String profile_picture_url){
@@ -35,7 +36,7 @@ public class UserManagmentDTO {
         return this.lastName;
     }
 
-    public Number getPhoneNumber(){
+    public String getPhoneNumber(){
         return this.phoneNumber;
     }
 
@@ -44,7 +45,7 @@ public class UserManagmentDTO {
     }
 
     public String getCollegeOrUniversityName(){
-        return this.CollegeOrUniversityName;
+        return this.collegeOrUniversityName;
     }
 
 
@@ -56,7 +57,7 @@ public class UserManagmentDTO {
                 "role='" + role + '\'' +
                 "DOB='" + DOB + '\'' +
                 "phone='" + phoneNumber + '\'' +
-                "Clg or uni='" + CollegeOrUniversityName + '\'' +
+                "Clg or uni='" + collegeOrUniversityName + '\'' +
                 ", profile_picture_url='" + profile_picture_url + '\'' +
                 '}';
     }
