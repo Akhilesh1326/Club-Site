@@ -1,6 +1,6 @@
 import { Heart, MessageCircle, Share2 } from "lucide-react";
 
-const posts = [
+const posts = [ 
   {
     id: 1,
     user: "Tech Club",
