@@ -42,7 +42,7 @@ public class ClubManagementController {
         System.out.println("Club logo "+clubDTO.getLogoUrl());
         System.out.println("Club banner "+clubDTO.getBannerUrl());
         System.out.println("Club visible "+clubDTO.getVisibility());
-        System.out.println("Club foundemail "+clubDTO.getFounderEmail());
+        System.out.println("Club founder email "+clubDTO.getFounderEmail());
 
         Map<String, Object> response = new HashMap<>();
 
