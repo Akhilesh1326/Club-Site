@@ -99,7 +99,7 @@ public class clubManagementService {
 
     }
 
-    private ClubMemberModel.Role convertToRole(String role){
+    public  ClubMemberModel.Role convertToRole(String role){
         try{
             return ClubMemberModel.Role.valueOf(role);
         } catch (IllegalArgumentException e) {
@@ -124,7 +124,7 @@ public class clubManagementService {
         return clubMemberRepo.deleteByUserIdAndClubId(userId, clubId);
     }
 
-    public ClubModel pathClub(ClubDTO clubDTO, UUID clubId) {
+    public ClubModel patchClub(ClubDTO clubDTO, UUID clubId) {
         Optional<ClubModel> getClub =  clubRepo.findClubById(clubId);
 
         ClubModel existClub = getClub.get();
@@ -134,29 +134,29 @@ public class clubManagementService {
         }
 
        if(clubDTO.getDescription() != null){
-            existClub.setName(clubDTO.getDescription());
+            existClub.setDescription(clubDTO.getDescription());
         }
 
        if(clubDTO.getLogoUrl() != null){
-            existClub.setName(clubDTO.getLogoUrl());
+            existClub.setLogoUrl(clubDTO.getLogoUrl());
         }
        if(clubDTO.getBannerUrl() != null){
-            existClub.setName(clubDTO.getBannerUrl());
+            existClub.setBannerUrl(clubDTO.getBannerUrl());
         }
        if(clubDTO.getCategory() != null){
-            existClub.setName(clubDTO.getCategory());
+            existClub.setCategory(convertToCategory(clubDTO.getCategory()));
         }
        if(clubDTO.getCollege() != null){
-            existClub.setName(clubDTO.getCollege());
+            existClub.setCollege(clubDTO.getCollege());
         }
        if(clubDTO.getVisibility() != null){
-            existClub.setName(clubDTO.getVisibility());
+            existClub.setVisibility(convertToVisibility(clubDTO.getVisibility()));
         }
        if(clubDTO.getFounderEmail() != null){
-            existClub.setName(clubDTO.getFounderEmail());
+            existClub.setFounderEmail(clubDTO.getFounderEmail());
         }
        if(clubDTO.getClubEmail() != null){
-            existClub.setName(clubDTO.getClubEmail());
+            existClub.setClubEmail(clubDTO.getClubEmail());
         }
 
        ClubModel updatedClub = clubRepo.save(existClub);
@@ -165,4 +165,5 @@ public class clubManagementService {
 
 
     }
+
 }
