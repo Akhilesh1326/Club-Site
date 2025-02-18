@@ -5,6 +5,7 @@ import com.example.club_management.club_management_service.DTO.ClubMemberDTO;
 import com.example.club_management.club_management_service.Model.ClubMemberModel;
 import com.example.club_management.club_management_service.Model.ClubModel;
 import com.example.club_management.club_management_service.Repo.ClubManagementRepo;
+import com.example.club_management.club_management_service.Repo.ClubMemberRepo;
 import com.example.club_management.club_management_service.Services.clubManagementService;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.http.HttpStatus;
@@ -22,11 +23,13 @@ public class ClubManagementController {
     private final clubManagementService clubService;
 //    private final HttpMessageConverters messageConverters;
     private final ClubManagementRepo clubManagementRepo;
+    private final ClubMemberRepo clubMemberRepo;
 
-    public ClubManagementController(clubManagementService clubService, HttpMessageConverters messageConverters, ClubManagementRepo clubManagementRepo){
+    public ClubManagementController(clubManagementService clubService, HttpMessageConverters messageConverters, ClubManagementRepo clubManagementRepo, ClubMemberRepo clubMemberRepo){
         this.clubService = clubService;
 //        this.messageConverters = messageConverters;
         this.clubManagementRepo = clubManagementRepo;
+        this.clubMemberRepo = clubMemberRepo;
     }
 
 
@@ -128,8 +131,8 @@ public class ClubManagementController {
         if (existingClubOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        ClubModel pathClub = clubService.pathClub(clubDTO, clubId);
-        return ResponseEntity.ok(pathClub);
+        ClubModel patchClub = clubService.patchClub(clubDTO, clubId);
+        return ResponseEntity.ok(patchClub);
     }
 
 
@@ -182,6 +185,49 @@ public class ClubManagementController {
         Optional<ClubMemberModel> deletedMember = clubService.deleteMember(userId, clubId);
         return ResponseEntity.ok(deletedMember);
     }
+
+    @PatchMapping("/clubs/club-member-update")
+    public ResponseEntity<ClubMemberModel> updateMemberDetails(@RequestBody ClubMemberDTO clubMemberDTO){
+
+        if(clubMemberDTO.getUserId() == null){
+            return ResponseEntity.notFound().build();
+        }
+        if(clubMemberDTO.getClubId() == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        Optional<ClubMemberModel> existingMember = clubMemberRepo.findByUserIdAndClubId(clubMemberDTO.getUserId(), clubMemberDTO.getClubId());
+        if(existingMember.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+
+        ClubMemberModel patchMember = existingMember.get();
+        if(patchMember.getRole() != null){
+            patchMember.setRole(convertToRole(clubMemberDTO.getRole()));
+        }
+
+        if(patchMember.getHierarchy() != null){
+            patchMember.setHierarchy(convertToHierarchy(clubMemberDTO.getHierarchy()));
+        }
+        ClubMemberModel updatedMember = clubMemberRepo.save(patchMember);
+        return ResponseEntity.ok(updatedMember);
+    }
+    public  ClubMemberModel.Role convertToRole(String role){
+        try{
+            return ClubMemberModel.Role.valueOf(role);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid Role option = "+role);
+        }
+    }
+
+    private ClubMemberModel.Hierarchy convertToHierarchy(String hierarchy){
+        try{
+            return ClubMemberModel.Hierarchy.valueOf(hierarchy);
+        }catch (IllegalArgumentException e){
+            throw new RuntimeException("Invalid Hierarchy position ");
+        }
+    }
+
 
 
 }
