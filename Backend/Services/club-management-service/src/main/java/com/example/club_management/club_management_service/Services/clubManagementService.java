@@ -123,4 +123,46 @@ public class clubManagementService {
     public Optional<ClubMemberModel> deleteMember(UUID userId, UUID clubId) {
         return clubMemberRepo.deleteByUserIdAndClubId(userId, clubId);
     }
+
+    public ClubModel pathClub(ClubDTO clubDTO, UUID clubId) {
+        Optional<ClubModel> getClub =  clubRepo.findClubById(clubId);
+
+        ClubModel existClub = getClub.get();
+
+        if(clubDTO.getName() != null){
+            existClub.setName(clubDTO.getName());
+        }
+
+       if(clubDTO.getDescription() != null){
+            existClub.setName(clubDTO.getDescription());
+        }
+
+       if(clubDTO.getLogoUrl() != null){
+            existClub.setName(clubDTO.getLogoUrl());
+        }
+       if(clubDTO.getBannerUrl() != null){
+            existClub.setName(clubDTO.getBannerUrl());
+        }
+       if(clubDTO.getCategory() != null){
+            existClub.setName(clubDTO.getCategory());
+        }
+       if(clubDTO.getCollege() != null){
+            existClub.setName(clubDTO.getCollege());
+        }
+       if(clubDTO.getVisibility() != null){
+            existClub.setName(clubDTO.getVisibility());
+        }
+       if(clubDTO.getFounderEmail() != null){
+            existClub.setName(clubDTO.getFounderEmail());
+        }
+       if(clubDTO.getClubEmail() != null){
+            existClub.setName(clubDTO.getClubEmail());
+        }
+
+       ClubModel updatedClub = clubRepo.save(existClub);
+
+       return updatedClub;
+
+
+    }
 }
