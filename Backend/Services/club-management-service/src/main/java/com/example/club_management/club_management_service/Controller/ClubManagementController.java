@@ -4,6 +4,7 @@ import com.example.club_management.club_management_service.DTO.ClubDTO;
 import com.example.club_management.club_management_service.DTO.ClubMemberDTO;
 import com.example.club_management.club_management_service.Model.ClubMemberModel;
 import com.example.club_management.club_management_service.Model.ClubModel;
+import com.example.club_management.club_management_service.Repo.ClubManagementRepo;
 import com.example.club_management.club_management_service.Services.clubManagementService;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.http.HttpStatus;
@@ -19,11 +20,13 @@ import java.util.*;
 public class ClubManagementController {
 
     private final clubManagementService clubService;
-    private final HttpMessageConverters messageConverters;
+//    private final HttpMessageConverters messageConverters;
+    private final ClubManagementRepo clubManagementRepo;
 
-    public ClubManagementController(clubManagementService clubService, HttpMessageConverters messageConverters){
+    public ClubManagementController(clubManagementService clubService, HttpMessageConverters messageConverters, ClubManagementRepo clubManagementRepo){
         this.clubService = clubService;
-        this.messageConverters = messageConverters;
+//        this.messageConverters = messageConverters;
+        this.clubManagementRepo = clubManagementRepo;
     }
 
 
@@ -119,12 +122,19 @@ public class ClubManagementController {
         return ResponseEntity.ok(clubService.deleteClub(userId, clubId));
     }
 
-    @PatchMapping("/clubs/update-club-details/clubId")
-    public ResponseEntity<Optional<ClubModel>> updateClubDetails(@RequestBody ClubDTO clubDTO, UUID userId){
-
+    @PatchMapping("/clubs/update-club-details/{clubId}")
+    public ResponseEntity<ClubModel> updateClubDetails(@RequestBody ClubDTO clubDTO, @PathVariable UUID clubId){
+        Optional<ClubModel> existingClubOptional = clubManagementRepo.findClubById(clubId);
+        if (existingClubOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        ClubModel pathClub = clubService.pathClub(clubDTO, clubId);
+        return ResponseEntity.ok(pathClub);
     }
 
-//    Memeber route controller
+
+//    ###### Member route controller ############################
+
 
     @PostMapping("clubs/add-members/") //Add a member to a club
     public ResponseEntity<Map<String, Object>> addNewMemberToClub(@RequestBody ClubMemberDTO clubMemberDTO){
