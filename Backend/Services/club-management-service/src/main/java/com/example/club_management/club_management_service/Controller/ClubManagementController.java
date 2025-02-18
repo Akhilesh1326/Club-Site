@@ -1,6 +1,5 @@
 package com.example.club_management.club_management_service.Controller;
 
-
 import com.example.club_management.club_management_service.DTO.ClubDTO;
 import com.example.club_management.club_management_service.DTO.ClubMemberDTO;
 import com.example.club_management.club_management_service.Model.ClubMemberModel;
@@ -120,6 +119,11 @@ public class ClubManagementController {
         return ResponseEntity.ok(clubService.deleteClub(userId, clubId));
     }
 
+    @PatchMapping("/clubs/update-club-details/clubId")
+    public ResponseEntity<Optional<ClubModel>> updateClubDetails(@RequestBody ClubDTO clubDTO, UUID userId){
+
+    }
+
 //    Memeber route controller
 
     @PostMapping("clubs/add-members/") //Add a member to a club
@@ -162,4 +166,12 @@ public class ClubManagementController {
         List<ClubMemberModel> members = clubService.getMemberByClubId(clubId);
         return ResponseEntity.ok(members);
     }
+
+    @DeleteMapping("/clubs/club-member-delete")
+    public ResponseEntity<Optional<ClubMemberModel>> deleteClubMember(@RequestBody UUID userId, UUID clubId){
+        Optional<ClubMemberModel> deletedMember = clubService.deleteMember(userId, clubId);
+        return ResponseEntity.ok(deletedMember);
+    }
+
+
 }
