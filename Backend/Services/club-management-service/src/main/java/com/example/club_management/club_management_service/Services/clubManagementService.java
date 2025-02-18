@@ -116,4 +116,7 @@ public class clubManagementService {
     }
 
 
+    public List<ClubMemberModel> getMemberByClubId(UUID clubId) {
+        return clubMemberRepo.findByClubId(clubId);
+    }
 }
