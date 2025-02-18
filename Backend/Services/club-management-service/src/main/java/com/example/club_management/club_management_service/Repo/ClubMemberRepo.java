@@ -30,5 +30,6 @@ public interface ClubMemberRepo extends MongoRepository<ClubMemberModel, String>
     boolean existsByUserIdAndClubId(UUID userId, UUID clubId);
 
     // Delete member by userId and clubId
-    void deleteByUserIdAndClubId(UUID userId, UUID clubId);
+    Optional<ClubMemberModel> deleteByUserIdAndClubId(UUID userId, UUID clubId);
+
 }
