@@ -3,7 +3,6 @@ package com.example.club_management.club_management_service.DTO;
 import java.util.UUID;
 
 public class ClubDTO {
-    private UUID id;
     private String name;
     private String description;
     private String logoUrl;
@@ -14,9 +13,6 @@ public class ClubDTO {
     private String founderEmail;
     private String clubEmail;
 
-    public UUID getId(){
-        return this.id;
-    }
 
     public void setName (String name){
         this.name = name;
