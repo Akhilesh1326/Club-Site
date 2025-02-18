@@ -28,7 +28,6 @@ public class ClubManagementController {
     }
 
 
-
     @PostMapping("/clubs/{userId}") // Create a new club
     public ResponseEntity <Map<String, Object>> createClub(@PathVariable UUID userId , @RequestBody ClubDTO clubDTO){
         System.out.println("Club name"+clubDTO.getName());
@@ -93,7 +92,7 @@ public class ClubManagementController {
         }
     }
 
-    @GetMapping("/clubs/user/{userId}") // Updated endpoint path for clarity
+    @GetMapping("/clubs/user/{userId}") // Fetch A club by userid
     public ResponseEntity<List<ClubModel>> getClubsByUserId(@PathVariable UUID userId) {
         List<ClubModel> clubs = clubService.getClubsByUserId(userId);
 
@@ -103,8 +102,7 @@ public class ClubManagementController {
         return ResponseEntity.ok(clubs);
     }
 
-
-    @GetMapping("/clubs/club-name/{name}")
+    @GetMapping("/clubs/club-name/{name}") // get club by club id
     public ResponseEntity<Optional<ClubModel>> getClubByName(@PathVariable String name){
         Optional<ClubModel> club = clubService.getClubByName(name);
         if(club.isPresent()){
@@ -122,10 +120,46 @@ public class ClubManagementController {
         return ResponseEntity.ok(clubService.deleteClub(userId, clubId));
     }
 
+//    Memeber route controller
+
     @PostMapping("clubs/add-members/") //Add a member to a club
-    public ResponseEntity<ClubMemberModel> addNewMemberToClub(@RequestBody ClubMemberDTO clubMemberDTO){
-        return ResponseEntity.ok(clubService.addClubMembers(clubMemberDTO));
+    public ResponseEntity<Map<String, Object>> addNewMemberToClub(@RequestBody ClubMemberDTO clubMemberDTO){
+        System.out.println("User id "+ clubMemberDTO.getUserId());
+        System.out.println("Club id "+ clubMemberDTO.getClubId());
+        System.out.println("Role "+ clubMemberDTO.getRole());
+        System.out.println("Hierarchy "+ clubMemberDTO.getHierarchy());
+
+        Map<String, Object> res = new HashMap<>();
+        if(clubMemberDTO.getClubId() == null){
+            res.put("Error ", "Club Id is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        }
+        if(clubMemberDTO.getUserId() == null){
+            res.put("Error ", "User Id is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        }
+        if(clubMemberDTO.getRole() == null || clubMemberDTO.getRole().trim().isEmpty()){
+            res.put("Error ", "Role is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        }
+        if(clubMemberDTO.getHierarchy() == null || clubMemberDTO.getHierarchy().trim().isEmpty()){
+            res.put("Error ", "Hierarchy of role is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        }
+        ClubMemberModel newClubMember = clubService.addClubMembers(clubMemberDTO);
+        res.put("Id ", newClubMember.getId());
+        res.put("User Id",newClubMember.getUserId());
+        res.put("Club Id",newClubMember.getClubId());
+        res.put("Role", newClubMember.getRole());
+        res.put("Hierarchy ", newClubMember.getHierarchy());
+
+        return ResponseEntity.ok(res);
+
     }
 
-//    @GetMapping("/clubs/:id/members") //Fetch members of a club
+    @GetMapping("/clubs/club-members/{clubId}") //Fetch members of a club
+    public ResponseEntity<List<ClubMemberModel>> getClubMemberByClubId(@PathVariable UUID clubId){
+        List<ClubMemberModel> members = clubService.getMemberByClubId(clubId);
+        return ResponseEntity.ok(members);
+    }
 }
