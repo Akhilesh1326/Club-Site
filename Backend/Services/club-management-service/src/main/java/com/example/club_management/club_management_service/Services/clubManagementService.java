@@ -119,4 +119,8 @@ public class clubManagementService {
     public List<ClubMemberModel> getMemberByClubId(UUID clubId) {
         return clubMemberRepo.findByClubId(clubId);
     }
+
+    public Optional<ClubMemberModel> deleteMember(UUID userId, UUID clubId) {
+        return clubMemberRepo.deleteByUserIdAndClubId(userId, clubId);
+    }
 }
