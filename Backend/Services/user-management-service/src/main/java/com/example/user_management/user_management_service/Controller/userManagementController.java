@@ -3,7 +3,9 @@ package com.example.user_management.user_management_service.Controller;
 
 import com.example.user_management.user_management_service.DTO.UserManagmentDTO;
 import com.example.user_management.user_management_service.Model.Users;
+import com.example.user_management.user_management_service.Repo.UsersRepository;
 import com.example.user_management.user_management_service.Service.userManagmentService;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import java.util.UUID;
 public class userManagementController {
     @Autowired
     private userManagmentService userManagementService;
+    @Autowired
+    private UsersRepository usersRepository;
 
     @GetMapping("/greet")
     public ResponseEntity<Map<String, String>> greet() {
@@ -83,8 +87,43 @@ public class userManagementController {
         }
     }
 
-    @PostMapping("/update-user/{userId}")
+    @PatchMapping("/update-user/{userId}")
     public ResponseEntity<String> updateUser(@PathVariable UUID userId, @RequestBody UserManagmentDTO userDTO){
-        return ResponseEntity.ok("hello");
+        Optional<Users> user = userManagementService.getAllDataById(userId);
+        if(user.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user Id not found");
+        }
+
+        Users existUser = user.get();
+        if(existUser.getFirstName() != null){
+            existUser.setFirstName(userDTO.getFirstName());
+        }
+        if(existUser.getLastName() != null){
+            existUser.setLastName(userDTO.getLastName());
+        }
+        if(existUser.getDOB() != null){
+        existUser.setDOB(userDTO.getDOB());
+        }
+        if(existUser.getCollegeName()!=null){
+            existUser.setCollegeName(userDTO.getCollegeOrUniversityName());
+        }
+        if(existUser.getRole()!=null){
+            existUser.setRole(convertToRole(userDTO.getRole()));
+        }
+        if(existUser.getPhoneNumber() != null){
+            existUser.setPhoneNumber(userDTO.getPhoneNumber());
+        }
+        if(existUser.getProfilePictureUrl() != null){
+            existUser.setProfilePictureUrl(userDTO.getProfile_picture_url());
+        }
+        usersRepository.save(existUser);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Update Success");
+
+
     }
+    private Users.Role convertToRole(String role){
+        return Users.Role.valueOf(role);
+    }
+
 }
