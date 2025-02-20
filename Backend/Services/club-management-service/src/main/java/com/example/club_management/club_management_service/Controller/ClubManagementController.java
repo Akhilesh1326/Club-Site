@@ -197,7 +197,7 @@ public class ClubManagementController {
         }
 
         Optional<ClubMemberModel> existingMember = clubMemberRepo.findByUserIdAndClubId(clubMemberDTO.getUserId(), clubMemberDTO.getClubId());
-        if(existingMember.isPresent()){
+        if(existingMember.isEmpty()){
             return ResponseEntity.notFound().build();
         }
 
