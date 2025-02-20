@@ -60,4 +60,24 @@ public class AuthUserService {
     public Optional<Auth_Users> getUserByUserName(String name) {
         return authUserRepository.findByUserName(name);
     }
+
+    public Auth_Users patchUser(AuthUserDTO authUserDTO, UUID userId) {
+        Optional<Auth_Users> getUser = authUserRepository.findUserById(userId);
+        Auth_Users patchUser = getUser.get();
+
+        if(authUserDTO.getUserName() != null){
+            patchUser.setUserName(authUserDTO.getUserName());
+        }
+
+        if(authUserDTO.getEmail() != null){
+            patchUser.setEmail(authUserDTO.getEmail());
+        }
+
+        if(authUserDTO.getPassword() != null){
+            String encodedPassword = passwordEncoder.encode(authUserDTO.getPassword());
+            patchUser.setPassword(encodedPassword);
+        }
+        return authUserRepository.save(patchUser);
+
+    }
 }
