@@ -71,4 +71,19 @@ public class AuthController {
         }
     }
 
+    @PatchMapping("/auth-user/user-update/{userId}")
+    public ResponseEntity<String> patchUserInfo(@RequestBody AuthUserDTO authUserDTO, @PathVariable UUID userId){
+
+        if(userId == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("userId is required");
+        }
+
+        Optional<Auth_Users> existUser = authUserRepository.findUserById(userId);
+        if(existUser.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+        }
+        Auth_Users patchUser = authUserSerivce.patchUser(authUserDTO, userId);
+        return ResponseEntity.ok("Update Success");
+    }
+
 }
