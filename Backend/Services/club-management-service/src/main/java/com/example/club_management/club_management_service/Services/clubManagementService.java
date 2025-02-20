@@ -158,11 +158,7 @@ public class clubManagementService {
        if(clubDTO.getClubEmail() != null){
             existClub.setClubEmail(clubDTO.getClubEmail());
         }
-
-       ClubModel updatedClub = clubRepo.save(existClub);
-
-       return updatedClub;
-
+        return clubRepo.save(existClub);
 
     }
 
