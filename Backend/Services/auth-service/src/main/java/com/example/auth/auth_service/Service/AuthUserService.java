@@ -7,6 +7,9 @@ import com.example.auth.auth_service.DTO.AuthUserDTO;
 import com.example.auth.auth_service.Model.Auth_Users;
 import com.example.auth.auth_service.Repo.AuthUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -21,7 +24,13 @@ public class AuthUserService {
     private AuthUserRepository authUserRepository;
 
     @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    JWTService jwtService;
 
     public Auth_Users register(AuthUserDTO authUserDTO) {
 
@@ -80,4 +89,15 @@ public class AuthUserService {
         return authUserRepository.save(patchUser);
 
     }
+
+    public String verify(AuthUserDTO authUserDTO) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authUserDTO.getUserName(), authUserDTO.getPassword()));
+        if (authentication.isAuthenticated()) {
+            return jwtService.generateToken(authUserDTO.getUserName());
+        } else {
+            return "fail";
+        }
+    }
+
+
 }
