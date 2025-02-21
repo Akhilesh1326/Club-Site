@@ -31,6 +31,11 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/login")
+    public String login(@RequestBody AuthUserDTO authUserDTO){
+        return authUserSerivce.verify(authUserDTO);
+    }
+
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> registerAuthUser(@RequestBody AuthUserDTO authUserDTO) {
 
