@@ -3,7 +3,7 @@ package com.example.auth.auth_service.Repo;
 
 import com.example.auth.auth_service.Model.Auth_Users;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+
 
 import java.util.Optional;
 import java.util.UUID;
