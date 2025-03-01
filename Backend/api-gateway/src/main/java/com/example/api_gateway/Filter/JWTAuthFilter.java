@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
@@ -29,42 +31,73 @@ public class JWTAuthFilter implements WebFilter {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    private Claims extractClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
     private boolean isTokenValid(String token) {
         try {
-            Claims claims = Jwts.parser()
-                    .verifyWith(getKey())
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
+            Claims claims = extractClaims(token);
             return claims.getExpiration().after(new Date());
         } catch (Exception e) {
+            System.err.println("Invalid Token: " + e.getMessage()); // Logging
             return false;
         }
     }
 
-    private Mono<Void> onError(ServerHttpResponse response, HttpStatus status) {
+    private String extractUserId(Claims claims) {
+        return claims.getSubject(); // Assuming User ID is stored as "sub"
+    }
+
+
+
+    private Mono<Void> onError(ServerHttpResponse response, HttpStatus status, String message) {
         response.setStatusCode(status);
-        return response.setComplete();
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+        String errorJson = "{\"error\": \"" + message + "\"}";
+        return response.writeWith(Mono.just(response.bufferFactory().wrap(errorJson.getBytes(StandardCharsets.UTF_8))));
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
+        String path = exchange.getRequest().getURI().getPath();
+
+        // Bypass JWT authentication for public endpoints
+        if (path.startsWith("/api/auth-service/register") ||
+                path.startsWith("/api/auth-service/login") ||
+                path.startsWith("/api/auth-service/greet")) {
+            return chain.filter(exchange);
+        }
 
         if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-            return onError(exchange.getResponse(), HttpStatus.UNAUTHORIZED);
+            return onError(exchange.getResponse(), HttpStatus.UNAUTHORIZED, "Missing Authorization Header");
         }
 
         String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return onError(exchange.getResponse(), HttpStatus.UNAUTHORIZED);
+            return onError(exchange.getResponse(), HttpStatus.UNAUTHORIZED, "Invalid Authorization Header");
         }
 
         String token = authHeader.substring(7);
         if (!isTokenValid(token)) {
-            return onError(exchange.getResponse(), HttpStatus.FORBIDDEN);
+            return onError(exchange.getResponse(), HttpStatus.FORBIDDEN, "Invalid or Expired Token");
         }
 
-        return chain.filter(exchange);
+        // Extract User ID &  from token
+        Claims claims = extractClaims(token);
+        String userId = extractUserId(claims);
+
+        // Set User ID &  in Request Headers
+        ServerHttpRequest modifiedRequest = request.mutate()
+                .header("X-User-ID", userId)
+                .build();
+
+        return chain.filter(exchange.mutate().request(modifiedRequest).build());
     }
 }
