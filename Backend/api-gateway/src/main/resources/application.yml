@@ -12,21 +12,45 @@ spring:
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/api/auth-service/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 5  # Increased since auth calls may need more requests
+                redis-rate-limiter.burstCapacity: 10
+                key-resolver: "#{@rateLimiterKeyResolver}"
 
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/user-management/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 3
+                redis-rate-limiter.burstCapacity: 7
+                key-resolver: "#{@rateLimiterKeyResolver}"
 
         - id: club-service
           uri: lb://CLUB-SERVICE
           predicates:
             - Path=/api/club-management-service/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 4  # Clubs might have frequent interactions
+                redis-rate-limiter.burstCapacity: 8
+                key-resolver: "#{@rateLimiterKeyResolver}"
 
         - id: event-service
           uri: lb://EVENT-SERVICE
           predicates:
             - Path=/events/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 2  # Events may not need frequent calls
+                redis-rate-limiter.burstCapacity: 5
+                key-resolver: "#{@rateLimiterKeyResolver}"
 
 eureka:
   client:
