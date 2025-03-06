@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: 8000  # Ensure it’s not using the same port as Auth Service
 
 spring:
   application:
-    name: AUTH-SERVICE
+    name: AUTH-SERVICE  # Ensure this is unique
 
 eureka:
   client:
@@ -14,4 +14,5 @@ eureka:
 
   instance:
     prefer-ip-address: true
-
+    lease-renewal-interval-in-seconds: 15  # Heartbeat interval
+    lease-expiration-duration-in-seconds: 90  # Expiry time for removing dead instances
