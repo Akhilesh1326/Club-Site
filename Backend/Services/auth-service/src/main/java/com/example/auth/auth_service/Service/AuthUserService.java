@@ -59,6 +59,7 @@ public class AuthUserService {
         authUsers.setCreatedAt(LocalDateTime.now());
 
         // Save the user to the database
+
         return authUserRepository.save(authUsers);
     }
 
