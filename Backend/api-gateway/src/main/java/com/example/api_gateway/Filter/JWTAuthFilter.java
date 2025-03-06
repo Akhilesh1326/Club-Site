@@ -33,7 +33,7 @@ public class JWTAuthFilter implements WebFilter {
 
     private Claims extractClaims(String token) {
         return Jwts.parser()
-                .verifyWith(getKey())
+                .verifyWith(getKey())  // ✅ Corrected parser usage
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -53,8 +53,6 @@ public class JWTAuthFilter implements WebFilter {
         return claims.getSubject(); // Assuming User ID is stored as "sub"
     }
 
-
-
     private Mono<Void> onError(ServerHttpResponse response, HttpStatus status, String message) {
         response.setStatusCode(status);
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
@@ -66,38 +64,40 @@ public class JWTAuthFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        String path = exchange.getRequest().getURI().getPath();
+        String path = request.getURI().getPath();
 
-        // Bypass JWT authentication for public endpoints
+        // ✅ Bypass JWT authentication for public endpoints
         if (path.startsWith("/api/auth-service/register") ||
                 path.startsWith("/api/auth-service/login") ||
                 path.startsWith("/api/auth-service/greet")) {
             return chain.filter(exchange);
         }
 
-        if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-            return onError(exchange.getResponse(), HttpStatus.UNAUTHORIZED, "Missing Authorization Header");
-        }
-
+        // ✅ Check Authorization Header
         String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return onError(exchange.getResponse(), HttpStatus.UNAUTHORIZED, "Invalid Authorization Header");
         }
 
+        // ✅ Extract and Validate Token
         String token = authHeader.substring(7);
         if (!isTokenValid(token)) {
             return onError(exchange.getResponse(), HttpStatus.FORBIDDEN, "Invalid or Expired Token");
         }
 
-        // Extract User ID &  from token
+        // ✅ Extract User ID & Set in Headers
         Claims claims = extractClaims(token);
         String userId = extractUserId(claims);
 
-        // Set User ID &  in Request Headers
         ServerHttpRequest modifiedRequest = request.mutate()
                 .header("X-User-ID", userId)
                 .build();
 
-        return chain.filter(exchange.mutate().request(modifiedRequest).build());
+        ServerWebExchange modifiedExchange = exchange.mutate().request(modifiedRequest).build();
+
+        // ✅ Set X-User-ID in Response (Optional)
+        modifiedExchange.getResponse().getHeaders().set("X-User-ID", userId);
+
+        return chain.filter(modifiedExchange);
     }
 }
