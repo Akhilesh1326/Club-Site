@@ -3,7 +3,10 @@ server:
 
 eureka:
   instance:
-    hostname: localhost
+    hostname: localhost  # Ensure the hostname matches where Eureka is hosted
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    register-with-eureka: false  # Eureka server does not register itself
+    fetch-registry: false  # Eureka server does not fetch registry from itself
+  server:
+    enable-self-preservation: false  # Disable self-preservation for debugging
+    eviction-interval-timer-in-ms: 60000  # Checks every 30 sec instead of 60 sec
