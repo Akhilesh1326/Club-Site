@@ -33,6 +33,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@RequestBody AuthUserDTO authUserDTO){
+
         return authUserSerivce.verify(authUserDTO);
     }
 
@@ -41,12 +42,15 @@ public class AuthController {
 
         Auth_Users registeredUser = authUserSerivce.register(authUserDTO);
 
+        String token = authUserSerivce.verify(authUserDTO);
         // Create a response map to send back necessary details
         Map<String, Object> response = new HashMap<>();
         response.put("id", registeredUser.getUserId());
         response.put("userName ", registeredUser.getUserName());
         response.put("email", registeredUser.getEmail());
         response.put("password", registeredUser.getPassword());
+        response.put("JWT token ",token);
+
         return ResponseEntity.ok(response);
     }
 
