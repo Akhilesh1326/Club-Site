@@ -66,13 +66,7 @@ public class userManagementController {
 
         Users user = userManagementService.addUser(userDTO, authId);
 
-        response.put("First Name", user.getFirstName());
-        response.put("Last Name", user.getLastName());
-        response.put("Date of Birth", user.getDOB());
-        response.put("College name", user.getCollegeName());
-        response.put("Role", user.getRole());
-        response.put("Phone Number", user.getPhoneNumber());
-        response.put("profile-picture-url", user.getProfilePictureUrl());
+        response.put("status","Success");
         return ResponseEntity.ok(response);
     }
 
