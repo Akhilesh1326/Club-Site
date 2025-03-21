@@ -35,7 +35,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless authentication like JWT
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth-service/register", "/api/auth-service/greet", "/api/auth-service/auth-user/id/**", "/api/auth-service/login").permitAll() // Public endpoints
+                        .requestMatchers("/api/auth-service/register", "/api/auth-service/greet", "/api/auth-service/auth-user/id/**", "/api/auth-service/login", "/api/auth-service/id-login").permitAll() // Public endpoints
                         .requestMatchers("/actuator/**").permitAll()  // Allow Eureka and monitoring
                         .requestMatchers(HttpMethod.GET).permitAll()
                         .anyRequest().authenticated() // Secure other endpoints.
