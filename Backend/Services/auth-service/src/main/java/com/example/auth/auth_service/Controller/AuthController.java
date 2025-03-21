@@ -33,7 +33,22 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/id-login")
+    public Map<String, String> getIdByUsername(@RequestBody Map<String, String> request) {
+        String userName = request.get("userName");
+        Auth_Users userData = authUserRepository.getByUserName(userName);
 
+        if (userData == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        String userId = userData.getUserId().toString();
+        System.out.println("auth data = " + userId);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("userId", userId);
+        return map;
+    }
 
 
     @PostMapping("/login")
