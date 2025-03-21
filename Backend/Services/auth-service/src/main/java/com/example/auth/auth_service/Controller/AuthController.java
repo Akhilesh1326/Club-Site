@@ -4,6 +4,8 @@ import com.example.auth.auth_service.DTO.AuthUserDTO;
 import com.example.auth.auth_service.Model.Auth_Users;
 import com.example.auth.auth_service.Repo.AuthUserRepository;
 import com.example.auth.auth_service.Service.AuthUserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,27 +33,53 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/login")
-    public String login(@RequestBody AuthUserDTO authUserDTO){
 
-        return authUserSerivce.verify(authUserDTO);
+
+
+    @PostMapping("/login")
+    public String login(@RequestBody AuthUserDTO authUserDTO, HttpServletResponse response) {
+        // Verify user and get response (could be a token, userId, etc.)
+        String authResponse = authUserSerivce.verify(authUserDTO);
+
+        // Create a cookie with the auth response or token
+        Cookie cookie = new Cookie("authToken", authResponse);
+
+        // Set cookie properties
+        cookie.setHttpOnly(true); // Secure, prevents JS access
+        cookie.setSecure(true);   // Use HTTPS
+        cookie.setPath("/");      // Available for the entire domain
+        cookie.setMaxAge(24 * 60 * 60); // 1 day expiration time in seconds
+
+        // Add the cookie to the response
+        response.addCookie(cookie);
+
+        return "status: Success";
     }
 
+
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> registerAuthUser(@RequestBody AuthUserDTO authUserDTO) {
+    public Map<String, String> registerAuthUser(@RequestBody AuthUserDTO authUserDTO, HttpServletResponse response1) {
 
         Auth_Users registeredUser = authUserSerivce.register(authUserDTO);
 
         String token = authUserSerivce.verify(authUserDTO);
-        // Create a response map to send back necessary details
-        Map<String, Object> response = new HashMap<>();
-        response.put("id", registeredUser.getUserId());
-        response.put("userName ", registeredUser.getUserName());
-        response.put("email", registeredUser.getEmail());
-        response.put("password", registeredUser.getPassword());
-        response.put("JWT token ",token);
 
-        return ResponseEntity.ok(response);
+        String id = registeredUser.getUserId().toString();
+
+        Cookie cookie = new Cookie("authToken", token);
+
+        // Set cookie properties
+        cookie.setHttpOnly(true); // Secure, prevents JS access
+        cookie.setSecure(true);   // Use HTTPS
+        cookie.setPath("/");      // Available for the entire domain
+        cookie.setMaxAge(24 * 60 * 60); // 1 day expiration time in seconds
+
+        // Add the cookie to the response
+        response1.addCookie(cookie);
+        Map<String,String> map = new HashMap<>();
+        map.put("Status", "Success");
+        map.put("id", id);
+        return map;
     }
 
     @GetMapping("/auth-user/id/{id}")
