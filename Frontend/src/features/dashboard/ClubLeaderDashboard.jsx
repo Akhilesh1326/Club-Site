@@ -1,323 +1,454 @@
+"use client"
 
-// import { useState } from "react"
-// import {
-//   Bell,
-//   Calendar,
-//   ChevronDown,
-//   Home,
-//   PieChart,
-//   Settings,
-//   Users,
-//   UserPlus,
-//   MessageCircle,
-//   Plus,
-//   Send,
-// } from "lucide-react"
-// import { Button } from "@/components/ui/button"
-// import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-// import { Input } from "@/components/ui/input"
-// import { Textarea } from "@/components/ui/textarea"
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-// import { MembersSection } from "@/components/MembersSection"
-// import { SettingsSection } from "@/components/SettingsSection"
-// import { AnalyticsSection } from "@/components/AnalyticsSection"
 
-// export default function ClubLeaderDashboard() {
-//   const [activeTab, setActiveTab] = useState("home")
 
-//   return (
-//     <div className="flex h-screen bg-gray-100">
-//       {/* Sidebar */}
-//       <aside className="w-64 bg-white shadow-md">
-//         <div className="p-4">
-//           <h2 className="text-2xl font-bold text-purple-600">ClubHub</h2>
-//         </div>
-//         <nav className="mt-6">
-//           <Button
-//             variant={activeTab === "home" ? "secondary" : "ghost"}
-//             className="w-full justify-start"
-//             onClick={() => setActiveTab("home")}
-//           >
-//             <Home className="mr-2 h-4 w-4" />
-//             Home
-//           </Button>
-//           <Button
-//             variant={activeTab === "events" ? "secondary" : "ghost"}
-//             className="w-full justify-start"
-//             onClick={() => setActiveTab("events")}
-//           >
-//             <Calendar className="mr-2 h-4 w-4" />
-//             Events
-//           </Button>
-//           <Button
-//             variant={activeTab === "analytics" ? "secondary" : "ghost"}
-//             className="w-full justify-start"
-//             onClick={() => setActiveTab("analytics")}
-//           >
-//             <PieChart className="mr-2 h-4 w-4" />
-//             Analytics
-//           </Button>
-//           <Button
-//             variant={activeTab === "members" ? "secondary" : "ghost"}
-//             className="w-full justify-start"
-//             onClick={() => setActiveTab("members")}
-//           >
-//             <Users className="mr-2 h-4 w-4" />
-//             Members
-//           </Button>
-//           <Button
-//             variant={activeTab === "settings" ? "secondary" : "ghost"}
-//             className="w-full justify-start"
-//             onClick={() => setActiveTab("settings")}
-//           >
-//             <Settings className="mr-2 h-4 w-4" />
-//             Settings
-//           </Button>
-//         </nav>
-//       </aside>
+import { useState } from "react"
+import {
+  AppBar,
+  Badge,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Container,
+  Drawer,
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
+  Toolbar,
+  Typography,
+} from "@mui/material"
+import {
+  Bell,
+  Calendar,
+  ChevronDown,
+  Home,
+  PieChart,
+  Settings,
+  Users,
+  UserPlus,
+  MessageCircle,
+  Plus,
+  Send,
+  User,
+} from "lucide-react"
+import  MembersSection  from "../../components/MemberSection"
+import  SettingsSection  from "../../components/SettingsSection"
+import  AnalyticsSection  from "../../components/AnalyticsSection"
+import  AdminProfile  from "../../components/profile/AdminProfile"
+import  ModeratorProfile  from "../../components/profile/ModeratorProfile"
+import  ProfileSection from "../../components/ProfileSection"
 
-//       {/* Main Content */}
-//       <main className="flex-1 overflow-y-auto">
-//         {/* Header */}
-//         <header className="bg-white shadow-sm">
-//           <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-//             <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-//             <div className="flex items-center">
-//               <Button variant="ghost" size="icon">
-//                 <Bell className="h-5 w-5" />
-//               </Button>
-//               <Button variant="ghost" className="ml-2">
-//                 John Doe
-//                 <ChevronDown className="ml-2 h-4 w-4" />
-//               </Button>
-//             </div>
-//           </div>
-//         </header>
 
-//         {/* Dashboard Content */}
-//         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-//           <Tabs defaultValue="home" className="space-y-4">
-//             <TabsList>
-//               <TabsTrigger value="home">Home</TabsTrigger>
-//               <TabsTrigger value="events">Events</TabsTrigger>
-//               <TabsTrigger value="analytics">Analytics</TabsTrigger>
-//               <TabsTrigger value="members">Members</TabsTrigger>
-//               <TabsTrigger value="settings">Settings</TabsTrigger>
-//             </TabsList>
-//             <TabsContent value="home" className="space-y-4">
-//               <Card>
-//                 <CardHeader>
-//                   <CardTitle>Welcome Back, John!</CardTitle>
-//                   <CardDescription>Here's what's happening with your club</CardDescription>
-//                 </CardHeader>
-//                 <CardContent>
-//                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-//                     <Card>
-//                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//                         <CardTitle className="text-sm font-medium">Total Members</CardTitle>
-//                         <Users className="h-4 w-4 text-muted-foreground" />
-//                       </CardHeader>
-//                       <CardContent>
-//                         <div className="text-2xl font-bold">1,234</div>
-//                         <p className="text-xs text-muted-foreground">+20% from last month</p>
-//                       </CardContent>
-//                     </Card>
-//                     <Card>
-//                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//                         <CardTitle className="text-sm font-medium">Upcoming Events</CardTitle>
-//                         <Calendar className="h-4 w-4 text-muted-foreground" />
-//                       </CardHeader>
-//                       <CardContent>
-//                         <div className="text-2xl font-bold">3</div>
-//                         <p className="text-xs text-muted-foreground">Next event in 2 days</p>
-//                       </CardContent>
-//                     </Card>
-//                     <Card>
-//                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//                         <CardTitle className="text-sm font-medium">New Members</CardTitle>
-//                         <UserPlus className="h-4 w-4 text-muted-foreground" />
-//                       </CardHeader>
-//                       <CardContent>
-//                         <div className="text-2xl font-bold">28</div>
-//                         <p className="text-xs text-muted-foreground">This week</p>
-//                       </CardContent>
-//                     </Card>
-//                     <Card>
-//                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//                         <CardTitle className="text-sm font-medium">Active Discussions</CardTitle>
-//                         <MessageCircle className="h-4 w-4 text-muted-foreground" />
-//                       </CardHeader>
-//                       <CardContent>
-//                         <div className="text-2xl font-bold">12</div>
-//                         <p className="text-xs text-muted-foreground">5 new since yesterday</p>
-//                       </CardContent>
-//                     </Card>
-//                   </div>
-//                 </CardContent>
-//               </Card>
+// TabPanel component for tab content
+function TabPanel(props) {
+    const { children, value, index, ...other } = props
+  return (
+    <div role="tabpanel" hidden={value !== index} id={`tabpanel-${index}`} aria-labelledby={`tab-${index}`} {...other}>
+      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
+    </div>
+  )
+}
 
-//               <div className="grid gap-4 md:grid-cols-2">
-//                 <Card>
-//                   <CardHeader>
-//                     <CardTitle>Recent Activities</CardTitle>
-//                   </CardHeader>
-//                   <CardContent>
-//                     <ul className="space-y-2">
-//                       <li className="flex items-center">
-//                         <span className="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">
-//                           Event
-//                         </span>
-//                         <span>Tech Talk: AI in 2023 was created</span>
-//                       </li>
-//                       <li className="flex items-center">
-//                         <span className="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">
-//                           Member
-//                         </span>
-//                         <span>Sarah Johnson joined the club</span>
-//                       </li>
-//                       <li className="flex items-center">
-//                         <span className="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">
-//                           Post
-//                         </span>
-//                         <span>New announcement: Summer Hackathon</span>
-//                       </li>
-//                       <li className="flex items-center">
-//                         <span className="bg-purple-100 text-purple-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">
-//                           Discussion
-//                         </span>
-//                         <span>Hot topic: Future of Web Development</span>
-//                       </li>
-//                     </ul>
-//                   </CardContent>
-//                 </Card>
+export default function ClubLeaderDashboard() {
+  const [activeTab, setActiveTab] = useState(0)
 
-//                 <Card>
-//                   <CardHeader>
-//                     <CardTitle>Upcoming Events</CardTitle>
-//                   </CardHeader>
-//                   <CardContent>
-//                     <ul className="space-y-2">
-//                       <li className="flex justify-between items-center">
-//                         <span>Tech Talk: AI in 2023</span>
-//                         <span className="text-sm text-muted-foreground">Jun 15</span>
-//                       </li>
-//                       <li className="flex justify-between items-center">
-//                         <span>Summer Hackathon</span>
-//                         <span className="text-sm text-muted-foreground">Jul 1-3</span>
-//                       </li>
-//                       <li className="flex justify-between items-center">
-//                         <span>Workshop: Intro to React</span>
-//                         <span className="text-sm text-muted-foreground">Jul 10</span>
-//                       </li>
-//                     </ul>
-//                   </CardContent>
-//                 </Card>
-//               </div>
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue)
+  }
 
-//               <Card>
-//                 <CardHeader>
-//                   <CardTitle>Quick Actions</CardTitle>
-//                 </CardHeader>
-//                 <CardContent>
-//                   <div className="flex space-x-4">
-//                     <Button>
-//                       <Plus className="mr-2 h-4 w-4" /> Create Event
-//                     </Button>
-//                     <Button variant="outline">
-//                       <Send className="mr-2 h-4 w-4" /> Send Announcement
-//                     </Button>
-//                     <Button variant="outline">
-//                       <Users className="mr-2 h-4 w-4" /> Invite Members
-//                     </Button>
-//                   </div>
-//                 </CardContent>
-//               </Card>
-//             </TabsContent>
-//             <TabsContent value="events" className="space-y-4">
-//               <Card>
-//                 <CardHeader>
-//                   <CardTitle>Create Event</CardTitle>
-//                 </CardHeader>
-//                 <CardContent>
-//                   <form className="space-y-4">
-//                     <div>
-//                       <label htmlFor="eventName" className="block text-sm font-medium text-gray-700">
-//                         Event Name
-//                       </label>
-//                       <Input id="eventName" placeholder="Enter event name" />
-//                     </div>
-//                     <div>
-//                       <label htmlFor="eventDate" className="block text-sm font-medium text-gray-700">
-//                         Event Date
-//                       </label>
-//                       <Input id="eventDate" type="date" />
-//                     </div>
-//                     <div>
-//                       <label htmlFor="eventDescription" className="block text-sm font-medium text-gray-700">
-//                         Event Description
-//                       </label>
-//                       <Textarea id="eventDescription" placeholder="Describe your event" />
-//                     </div>
-//                     <Button>Create Event</Button>
-//                   </form>
-//                 </CardContent>
-//               </Card>
-//             </TabsContent>
-//             <TabsContent value="analytics" className="space-y-4">
-//               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-//                 <Card>
-//                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//                     <CardTitle className="text-sm font-medium">Total Members</CardTitle>
-//                     <Users className="h-4 w-4 text-muted-foreground" />
-//                   </CardHeader>
-//                   <CardContent>
-//                     <div className="text-2xl font-bold">1,234</div>
-//                     <p className="text-xs text-muted-foreground">+20% from last month</p>
-//                   </CardContent>
-//                 </Card>
-//                 <Card>
-//                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//                     <CardTitle className="text-sm font-medium">Event Attendance</CardTitle>
-//                     <Calendar className="h-4 w-4 text-muted-foreground" />
-//                   </CardHeader>
-//                   <CardContent>
-//                     <div className="text-2xl font-bold">573</div>
-//                     <p className="text-xs text-muted-foreground">+5% from last event</p>
-//                   </CardContent>
-//                 </Card>
-//                 <Card>
-//                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//                     <CardTitle className="text-sm font-medium">Page Visits</CardTitle>
-//                     <PieChart className="h-4 w-4 text-muted-foreground" />
-//                   </CardHeader>
-//                   <CardContent>
-//                     <div className="text-2xl font-bold">2,345</div>
-//                     <p className="text-xs text-muted-foreground">+10% from last week</p>
-//                   </CardContent>
-//                 </Card>
-//                 <Card>
-//                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//                     <CardTitle className="text-sm font-medium">Active Members</CardTitle>
-//                     <Users className="h-4 w-4 text-muted-foreground" />
-//                   </CardHeader>
-//                   <CardContent>
-//                     <div className="text-2xl font-bold">789</div>
-//                     <p className="text-xs text-muted-foreground">+15% from last month</p>
-//                   </CardContent>
-//                 </Card>
-//               </div>
-//               <AnalyticsSection />
-//             </TabsContent>
-//             <TabsContent value="members">
-//               <MembersSection />
-//             </TabsContent>
-//             <TabsContent value="settings">
-//               <SettingsSection />
-//             </TabsContent>
-//           </Tabs>
-//         </div>
-//       </main>
-//     </div>
-//   )
-// }
+  const drawerWidth = 240
+
+  return (
+    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f5f5f5" }}>
+      {/* Sidebar */}
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box" },
+        }}
+      >
+        <Box sx={{ p: 2 }}>
+          <Typography variant="h5" fontWeight="bold" color="primary">
+            ClubHub
+          </Typography>
+        </Box>
+        <List sx={{ mt: 2 }}>
+          <ListItem disablePadding>
+            <ListItemButton selected={activeTab === 0} onClick={() => setActiveTab(0)}>
+              <ListItemIcon>
+                <Home size={20} />
+              </ListItemIcon>
+              <ListItemText primary="Home" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton selected={activeTab === 1} onClick={() => setActiveTab(1)}>
+              <ListItemIcon>
+                <Calendar size={20} />
+              </ListItemIcon>
+              <ListItemText primary="Events" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton selected={activeTab === 2} onClick={() => setActiveTab(2)}>
+              <ListItemIcon>
+                <PieChart size={20} />
+              </ListItemIcon>
+              <ListItemText primary="Analytics" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton selected={activeTab === 3} onClick={() => setActiveTab(3)}>
+              <ListItemIcon>
+                <Users size={20} />
+              </ListItemIcon>
+              <ListItemText primary="Members" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton selected={activeTab === 4} onClick={() => setActiveTab(4)}>
+              <ListItemIcon>
+                <Settings size={20} />
+              </ListItemIcon>
+              <ListItemText primary="Settings" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton selected={activeTab === 5} onClick={() => setActiveTab(5)}>
+              <ListItemIcon>
+                <User size={20} />
+              </ListItemIcon>
+              <ListItemText primary="Profile" />
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Drawer>
+
+      {/* Main Content */}
+      <Box component="main" sx={{ flexGrow: 1 }}>
+        {/* Header */}
+        <AppBar position="static" color="default" elevation={1} sx={{ bgcolor: "white" }}>
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Dashboard
+            </Typography>
+            <IconButton size="large" color="inherit">
+              <Badge badgeContent={4} color="error">
+                <Bell size={20} />
+              </Badge>
+            </IconButton>
+            <Button color="inherit" endIcon={<ChevronDown size={16} />} onClick={() => setActiveTab(5)}>
+              John Doe
+            </Button>
+          </Toolbar>
+        </AppBar>
+
+        {/* Dashboard Content */}
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 2 }}>
+            <Tab label="Home" />
+            <Tab label="Events" />
+            <Tab label="Analytics" />
+            <Tab label="Members" />
+            <Tab label="Settings" />
+            <Tab label="Profile" />
+          </Tabs>
+
+          {/* Home Tab */}
+          <TabPanel value={activeTab} index={0}>
+            <Card sx={{ mb: 4 }}>
+              <CardHeader title="Welcome Back, John!" subheader="Here's what's happening with your club" />
+              <CardContent>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Card>
+                      <CardContent>
+                        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                          <Typography variant="subtitle2" color="text.secondary">
+                            Total Members
+                          </Typography>
+                          <Users size={16} color="#6e6e6e" />
+                        </Box>
+                        <Typography variant="h4" component="div" sx={{ mt: 1 }}>
+                          1,234
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          +20% from last month
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Card>
+                      <CardContent>
+                        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                          <Typography variant="subtitle2" color="text.secondary">
+                            Upcoming Events
+                          </Typography>
+                          <Calendar size={16} color="#6e6e6e" />
+                        </Box>
+                        <Typography variant="h4" component="div" sx={{ mt: 1 }}>
+                          3
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Next event in 2 days
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Card>
+                      <CardContent>
+                        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                          <Typography variant="subtitle2" color="text.secondary">
+                            New Members
+                          </Typography>
+                          <UserPlus size={16} color="#6e6e6e" />
+                        </Box>
+                        <Typography variant="h4" component="div" sx={{ mt: 1 }}>
+                          28
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          This week
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Card>
+                      <CardContent>
+                        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                          <Typography variant="subtitle2" color="text.secondary">
+                            Active Discussions
+                          </Typography>
+                          <MessageCircle size={16} color="#6e6e6e" />
+                        </Box>
+                        <Typography variant="h4" component="div" sx={{ mt: 1 }}>
+                          12
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          5 new since yesterday
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Card>
+                  <CardHeader title="Recent Activities" />
+                  <CardContent>
+                    <List>
+                      <ListItem>
+                        <Chip label="Event" size="small" sx={{ mr: 1, bgcolor: "#e3f2fd", color: "#1976d2" }} />
+                        <Typography>Tech Talk: AI in 2023 was created</Typography>
+                      </ListItem>
+                      <ListItem>
+                        <Chip label="Member" size="small" sx={{ mr: 1, bgcolor: "#e8f5e9", color: "#2e7d32" }} />
+                        <Typography>Sarah Johnson joined the club</Typography>
+                      </ListItem>
+                      <ListItem>
+                        <Chip label="Post" size="small" sx={{ mr: 1, bgcolor: "#fff8e1", color: "#f57f17" }} />
+                        <Typography>New announcement: Summer Hackathon</Typography>
+                      </ListItem>
+                      <ListItem>
+                        <Chip label="Discussion" size="small" sx={{ mr: 1, bgcolor: "#f3e5f5", color: "#7b1fa2" }} />
+                        <Typography>Hot topic: Future of Web Development</Typography>
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Card>
+                  <CardHeader title="Upcoming Events" />
+                  <CardContent>
+                    <List>
+                      <ListItem sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Typography>Tech Talk: AI in 2023</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Jun 15
+                        </Typography>
+                      </ListItem>
+                      <ListItem sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Typography>Summer Hackathon</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Jul 1-3
+                        </Typography>
+                      </ListItem>
+                      <ListItem sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Typography>Workshop: Intro to React</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Jul 10
+                        </Typography>
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+
+            <Card sx={{ mt: 3 }}>
+              <CardHeader title="Quick Actions" />
+              <CardContent>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                  <Button variant="contained" startIcon={<Plus size={16} />}>
+                    Create Event
+                  </Button>
+                  <Button variant="outlined" startIcon={<Send size={16} />}>
+                    Send Announcement
+                  </Button>
+                  <Button variant="outlined" startIcon={<Users size={16} />}>
+                    Invite Members
+                  </Button>
+                </Stack>
+              </CardContent>
+            </Card>
+          </TabPanel>
+
+          {/* Events Tab */}
+          <TabPanel value={activeTab} index={1}>
+            <Card>
+              <CardHeader title="Create Event" />
+              <CardContent>
+                <Box component="form" sx={{ "& .MuiTextField-root": { mb: 2 } }}>
+                  <TextField fullWidth id="eventName" label="Event Name" placeholder="Enter event name" />
+                  <TextField
+                    fullWidth
+                    id="eventDate"
+                    label="Event Date"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                  />
+                  <TextField
+                    fullWidth
+                    id="eventDescription"
+                    label="Event Description"
+                    placeholder="Describe your event"
+                    multiline
+                    rows={4}
+                  />
+                  <Button variant="contained" sx={{ mt: 2 }}>
+                    Create Event
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          </TabPanel>
+
+          {/* Analytics Tab */}
+          <TabPanel value={activeTab} index={2}>
+            <Grid container spacing={3} sx={{ mb: 3 }}>
+              <Grid item xs={12} sm={6} md={3}>
+                <Card>
+                  <CardContent>
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Total Members
+                      </Typography>
+                      <Users size={16} color="#6e6e6e" />
+                    </Box>
+                    <Typography variant="h4" component="div" sx={{ mt: 1 }}>
+                      1,234
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      +20% from last month
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Card>
+                  <CardContent>
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Event Attendance
+                      </Typography>
+                      <Calendar size={16} color="#6e6e6e" />
+                    </Box>
+                    <Typography variant="h4" component="div" sx={{ mt: 1 }}>
+                      573
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      +5% from last event
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Card>
+                  <CardContent>
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Page Visits
+                      </Typography>
+                      <PieChart size={16} color="#6e6e6e" />
+                    </Box>
+                    <Typography variant="h4" component="div" sx={{ mt: 1 }}>
+                      2,345
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      +10% from last week
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Card>
+                  <CardContent>
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Active Members
+                      </Typography>
+                      <Users size={16} color="#6e6e6e" />
+                    </Box>
+                    <Typography variant="h4" component="div" sx={{ mt: 1 }}>
+                      789
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      +15% from last month
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+            <AnalyticsSection />
+          </TabPanel>
+
+          {/* Members Tab */}
+          <TabPanel value={activeTab} index={3}>
+            <MembersSection />
+          </TabPanel>
+
+          {/* Settings Tab */}
+          <TabPanel value={activeTab} index={4}>
+            <SettingsSection />
+          </TabPanel>
+
+          {/* Profile Tab */}
+          <TabPanel value={activeTab} index={5}>
+            <ProfileSection userRole="Moderator" />
+          </TabPanel>
+        </Container>
+      </Box>
+    </Box>
+  )
+}
 
