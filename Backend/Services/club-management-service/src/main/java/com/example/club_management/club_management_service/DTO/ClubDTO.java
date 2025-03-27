@@ -12,12 +12,23 @@ public class ClubDTO {
     private String visibility;
     private String founderEmail;
     private String clubEmail;
+    private String clubCity;
+    private String clubState;
 
+
+    public String getClubCity(){
+        return this.clubCity;
+    }
+    public String getClubState(){
+        return this.clubState;
+    }
 
     public void setName (String name){
+
         this.name = name;
     }
     public String getName (){
+
         return this.name;
     }
 
@@ -25,6 +36,7 @@ public class ClubDTO {
         this.description = description;
     }
     public String getDescription (){
+
         return this.description;
     }
 
