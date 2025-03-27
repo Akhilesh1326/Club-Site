@@ -42,6 +42,7 @@ public class JWTAuthFilter implements WebFilter {
     private boolean isTokenValid(String token) {
         try {
             Claims claims = extractClaims(token);
+            System.out.println("expiration - "+ claims.getExpiration().after(new Date()));
             return claims.getExpiration().after(new Date());
         } catch (Exception e) {
             System.err.println("Invalid Token: " + e.getMessage()); // Logging
@@ -49,9 +50,6 @@ public class JWTAuthFilter implements WebFilter {
         }
     }
 
-    private String extractUserId(Claims claims) {
-        return claims.getSubject(); // Assuming User ID is stored as "sub"
-    }
 
     private Mono<Void> onError(ServerHttpResponse response, HttpStatus status, String message) {
         response.setStatusCode(status);
@@ -62,42 +60,71 @@ public class JWTAuthFilter implements WebFilter {
     }
 
     @Override
+
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
-        // ✅ Bypass JWT authentication for public endpoints
+        // Bypass JWT authentication for public endpoints
         if (path.startsWith("/api/auth-service/register") ||
                 path.startsWith("/api/auth-service/login") ||
                 path.startsWith("/api/auth-service/greet")) {
             return chain.filter(exchange);
         }
 
-        // ✅ Check Authorization Header
-        String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return onError(exchange.getResponse(), HttpStatus.UNAUTHORIZED, "Invalid Authorization Header");
+        // Extract Token from Cookie
+        String token = extractTokenFromCookie(request);
+        if (token == null) {
+            return onError(exchange.getResponse(), HttpStatus.UNAUTHORIZED, "Token not found in cookies");
         }
 
-        // ✅ Extract and Validate Token
-        String token = authHeader.substring(7);
+        // Validate Token
         if (!isTokenValid(token)) {
             return onError(exchange.getResponse(), HttpStatus.FORBIDDEN, "Invalid or Expired Token");
         }
 
-        // ✅ Extract User ID & Set in Headers
+        // Extract Claims & Set in Headers
         Claims claims = extractClaims(token);
         String userId = extractUserId(claims);
+        String username = extractUsername(claims);
+        String role = extractRole(claims);
 
+        // Add extracted claims to the request headers
         ServerHttpRequest modifiedRequest = request.mutate()
-                .header("X-User-ID", userId)
+                .header("userId", userId)
+                .header("username", username)
+                .header("role", role)
                 .build();
 
         ServerWebExchange modifiedExchange = exchange.mutate().request(modifiedRequest).build();
 
-        // ✅ Set X-User-ID in Response (Optional)
+        // Optional: Add to Response Headers (If required)
         modifiedExchange.getResponse().getHeaders().set("X-User-ID", userId);
+        modifiedExchange.getResponse().getHeaders().set("X-Username", username);
+        modifiedExchange.getResponse().getHeaders().set("X-User-Role", role);
 
         return chain.filter(modifiedExchange);
+    }
+
+
+    private String extractUserId(Claims claims) {
+        return claims.get("userId", String.class);
+    }
+
+    private String extractRole(Claims claims) {
+        return claims.get("role", String.class);
+    }
+
+    private String extractUsername(Claims claims) {
+        return claims.getSubject();
+    }
+
+
+
+    private String extractTokenFromCookie(ServerHttpRequest request) {
+        if (request.getCookies().containsKey("authToken")) {
+            return request.getCookies().getFirst("authToken").getValue();
+        }
+        return null;
     }
 }
