@@ -28,6 +28,7 @@ public class clubManagementService {
     }
 
     public ClubModel createClub(UUID userId, ClubDTO clubDTO){
+        System.out.println("hello");
         if(clubRepo.findByClubName(clubDTO.getName()).isPresent()){
             throw new RuntimeException("Name of club is already present");
         }
@@ -36,7 +37,6 @@ public class clubManagementService {
         ClubModel clubModel = new ClubModel();
 
         clubModel.setUserId(userId);
-
         clubModel.setName(clubDTO.getName());
         clubModel.setDescription(clubDTO.getDescription());
         clubModel.setLogoUrl(clubDTO.getLogoUrl());
@@ -46,6 +46,11 @@ public class clubManagementService {
         clubModel.setVisibility(convertToVisibility(clubDTO.getVisibility()));
         clubModel.setFounderEmail(clubDTO.getFounderEmail());
         clubModel.setClubEmail(clubDTO.getClubEmail());
+        clubModel.setClubState(clubDTO.getClubState());
+        clubModel.setClubCity(clubDTO.getClubCity());
+
+        System.out.println("club city = "+ clubModel.getClubCity());
+        System.out.println("club city = "+ clubDTO.getClubCity());
 
         return clubRepo.save(clubModel);
     }
