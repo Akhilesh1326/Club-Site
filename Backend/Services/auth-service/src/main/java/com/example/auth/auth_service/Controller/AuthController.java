@@ -22,9 +22,10 @@ import java.util.UUID;
 public class AuthController {
 
     @Autowired
-    private AuthUserService authUserSerivce;
+    private AuthUserService authUserService;
     @Autowired
     private AuthUserRepository authUserRepository;
+
 
     @GetMapping("/greet")
     public ResponseEntity<Map<String, String>> greet() {
@@ -36,13 +37,13 @@ public class AuthController {
     @PostMapping("/id-login")
     public Map<String, String> getIdByUsername(@RequestBody Map<String, String> request) {
         String userName = request.get("userName");
-        Auth_Users userData = authUserRepository.getByUserName(userName);
+        Optional<Auth_Users> userData = authUserService.getUserByUserName(userName);
 
-        if (userData == null) {
+        if (userData.isEmpty()) {
             throw new RuntimeException("User not found");
         }
 
-        String userId = userData.getUserId().toString();
+        String userId = userData.get().getUserId().toString();
         System.out.println("auth data = " + userId);
 
         Map<String, String> map = new HashMap<>();
@@ -50,11 +51,10 @@ public class AuthController {
         return map;
     }
 
-
     @PostMapping("/login")
     public String login(@RequestBody AuthUserDTO authUserDTO, HttpServletResponse response) {
         // Verify user and get response (could be a token, userId, etc.)
-        String authResponse = authUserSerivce.verify(authUserDTO);
+        String authResponse = authUserService.verify(authUserDTO);
 
         // Create a cookie with the auth response or token
         Cookie cookie = new Cookie("authToken", authResponse);
@@ -71,15 +71,56 @@ public class AuthController {
         return "status: Success";
     }
 
-
     @PostMapping("/register")
-    public Map<String, String> registerAuthUser(@RequestBody AuthUserDTO authUserDTO, HttpServletResponse response1) {
+    public ResponseEntity<Map<String, Object>>  registerAuthUser(@RequestBody AuthUserDTO userDTO, HttpServletResponse response1) {
+        System.out.println("Hello = " + userDTO);
+        Map<String, Object> response = new HashMap<>();
 
-        Auth_Users registeredUser = authUserSerivce.register(authUserDTO);
+        if(userDTO.getEmail() == null || userDTO.getEmail().trim().isEmpty()){
+            response.put("Error", "Email is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
 
-        String token = authUserSerivce.verify(authUserDTO);
+        if(userDTO.getUserName() == null || userDTO.getUserName().trim().isEmpty()){
+            response.put("Error", "Username is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
 
-        String id = registeredUser.getUserId().toString();
+        if(userDTO.getPassword() == null || userDTO.getPassword().trim().isEmpty()){
+            response.put("Error", "Password is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+
+        }
+
+        if (userDTO.getFirstName() == null || userDTO.getFirstName().trim().isEmpty()) {
+            response.put("error", "First name is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if (userDTO.getLastName() == null || userDTO.getLastName().trim().isEmpty()) {
+            response.put("error", "Last name is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if (userDTO.getCollegeOrUniversityName() == null || userDTO.getCollegeOrUniversityName().trim().isEmpty()) {
+            response.put("error", "College or University name is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if (userDTO.getPhoneNumber() == null || userDTO.getPhoneNumber().trim().isEmpty()) {
+            response.put("error", "Phone number is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        if (userDTO.getDOB() == null) {
+            response.put("error", "Date of birth is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        authUserService.register(userDTO);
+        String token = authUserService.verify(userDTO);
+
+
 
         Cookie cookie = new Cookie("authToken", token);
 
@@ -91,20 +132,19 @@ public class AuthController {
 
         // Add the cookie to the response
         response1.addCookie(cookie);
-        Map<String,String> map = new HashMap<>();
-        map.put("Status", "Success");
-        map.put("id", id);
-        return map;
+
+        response.put("status", "Success");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/auth-user/id/{id}")
     public ResponseEntity<String> getUserById(@PathVariable UUID id) {
         System.out.println("Hello from get");
-        Optional<Auth_Users> user = authUserSerivce.getUserById(id);
+        Optional<Auth_Users> user = authUserService.getUserById(id);
         System.out.println(user);
         if (user.isPresent()) {
             return ResponseEntity.ok("Username = "+user.get().getUserName() +
-                                            "\nEmail = "+user.get().getEmail());  // Return email if user exists
+                    "\nEmail = "+user.get().getEmail());  // Return email if user exists
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
@@ -112,30 +152,86 @@ public class AuthController {
 
     @GetMapping("/auth-user/name/{name}")
     public ResponseEntity<String> getUserByName(@PathVariable String name){
-        Optional<Auth_Users> user = authUserSerivce.getUserByUserName(name);
+        Optional<Auth_Users> user = authUserService.getUserByUserName(name);
         if(user.isPresent()){
             return ResponseEntity.ok("Username = "+user.get().getUserName() +
                     "\nEmail = "+user.get().getEmail());
         }
         else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
-
         }
     }
 
     @PatchMapping("/auth-user/user-update/{userId}")
     public ResponseEntity<String> patchUserInfo(@RequestBody AuthUserDTO authUserDTO, @PathVariable UUID userId){
-
         if(userId == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("userId is required");
         }
 
-        Optional<Auth_Users> existUser = authUserRepository.findUserById(userId);
+        Optional<Auth_Users> existUser = authUserService.getUserById(userId);
         if(existUser.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
         }
-        Auth_Users patchUser = authUserSerivce.patchUser(authUserDTO, userId);
+        Auth_Users patchUser = authUserService.patchUser(authUserDTO, userId);
         return ResponseEntity.ok("Update Success");
     }
 
+    @GetMapping("/get-user")
+    public ResponseEntity<Optional<Auth_Users>> getUser(@RequestHeader("userId") String userId,
+                                                        @RequestHeader("username") String username,
+                                                        @RequestHeader("role") String role){
+
+        System.out.println("username = "+username);
+        System.out.println("username = "+userId);
+        System.out.println("username = "+role);
+        Optional<Auth_Users> user = authUserRepository.findUserById(UUID.fromString(userId));
+
+        if (user.isPresent()) {
+            System.out.println("hello1");
+            return ResponseEntity.ok(user);  // Return email if user exists
+        } else {
+            System.out.println("hello1");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Optional.empty());
+        }
+    }
+
+    @PatchMapping("/update-user/{userId}")
+    public ResponseEntity<String> updateUser(@PathVariable UUID userId, @RequestBody AuthUserDTO userDTO){
+        Optional<Auth_Users> userOptional = null;
+        if(userOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user Id not found");
+        }
+
+        Auth_Users existingUser = userOptional.get();
+        if(userDTO.getFirstName() != null){
+            existingUser.setFirstName(userDTO.getFirstName());
+        }
+        if(userDTO.getLastName() != null){
+            existingUser.setLastName(userDTO.getLastName());
+        }
+        if(userDTO.getDOB() != null){
+            existingUser.setDOB(userDTO.getDOB());
+        }
+        if(userDTO.getCollegeOrUniversityName() != null){
+            existingUser.setCollegeOrUniversityName(userDTO.getCollegeOrUniversityName());
+        }
+        if(userDTO.getRole() != null){
+            existingUser.setRole(convertToRole(userDTO.getRole()));
+        }
+        if(userDTO.getPhoneNumber() != null){
+            existingUser.setPhoneNumber(userDTO.getPhoneNumber());
+        }
+        if(userDTO.getProfile_picture_url() != null){
+            existingUser.setProfilePictureUrl(userDTO.getProfile_picture_url());
+        }
+
+        // This should be handled in the service
+//        userManagementService.updateUser(existingUser);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Update Success");
+    }
+
+    private Auth_Users.Role convertToRole(String role){
+        return Auth_Users.Role.valueOf(role);
+    }
 }
