@@ -19,21 +19,11 @@ spring:
                 redis-rate-limiter.burstCapacity: 10
                 key-resolver: "#{@rateLimiterKeyResolver}"
 
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/api/user-management/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 3
-                redis-rate-limiter.burstCapacity: 7
-                key-resolver: "#{@rateLimiterKeyResolver}"
 
         - id: club-service
           uri: lb://CLUB-SERVICE
           predicates:
-            - Path=/api/club-management-service/**
+            - Path=/api/club-management/**
           filters:
             - name: RequestRateLimiter
               args:
