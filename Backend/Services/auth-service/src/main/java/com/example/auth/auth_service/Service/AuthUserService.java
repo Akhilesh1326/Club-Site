@@ -32,7 +32,7 @@ public class AuthUserService {
     @Autowired
     JWTService jwtService;
 
-    public Auth_Users register(AuthUserDTO authUserDTO) {
+    public void register(AuthUserDTO authUserDTO) {
 
         if (authUserRepository.findByEmail(authUserDTO.getEmail()).isPresent()) {
             throw new EmailAlreadyExistsException("Email already exists");
@@ -43,9 +43,9 @@ public class AuthUserService {
         }
 
 
-        Auth_Users authUsers = new Auth_Users();
-        authUsers.setEmail(authUserDTO.getEmail());
-        authUsers.setUserName(authUserDTO.getUserName());
+        Auth_Users users = new Auth_Users();
+        users.setEmail(authUserDTO.getEmail());
+        users.setUserName(authUserDTO.getUserName());
 
         // Log password before encoding to verify its value
         String rawPassword = authUserDTO.getPassword();
@@ -55,12 +55,18 @@ public class AuthUserService {
         String encodedPassword = passwordEncoder.encode(rawPassword);
         System.out.println("Encoded password: " + encodedPassword);
 
-        authUsers.setPassword(encodedPassword); // Set the encoded password
-        authUsers.setCreatedAt(LocalDateTime.now());
+        users.setPassword(encodedPassword); // Set the encoded password
+        users.setCreatedAt(LocalDateTime.now());
 
-        // Save the user to the database
+        users.setFirstName(authUserDTO.getFirstName());
+        users.setLastName(authUserDTO.getLastName());
+        users.setDOB(authUserDTO.getDOB());
+        users.setRole(convertToRole(authUserDTO.getRole()));
+        users.setCollegeOrUniversityName(authUserDTO.getCollegeOrUniversityName());
+        users.setPhoneNumber(authUserDTO.getPhoneNumber());
+        users.setProfilePictureUrl(authUserDTO.getProfile_picture_url());
 
-        return authUserRepository.save(authUsers);
+        authUserRepository.save(users);
     }
 
     public Optional<Auth_Users> getUserById(UUID id){
@@ -94,9 +100,23 @@ public class AuthUserService {
     public String verify(AuthUserDTO authUserDTO) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authUserDTO.getUserName(), authUserDTO.getPassword()));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authUserDTO.getUserName());
+            Auth_Users userData = authUserRepository.getByUserName(authUserDTO.getUserName());
+            System.out.println("auth data = "+userData.getUserId());
+            System.out.println("auth role = "+userData.getRole());
+            return jwtService.generateToken(authUserDTO.getUserName(), userData.getUserId(), userData.getRole());
         } else {
             return "fail";
+        }
+    }
+
+
+
+
+    private Auth_Users.Role convertToRole(String role) {
+        try {
+            return Auth_Users.Role.valueOf(role);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new IllegalArgumentException("Invalid role: " + role);
         }
     }
 
