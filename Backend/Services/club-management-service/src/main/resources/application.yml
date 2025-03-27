@@ -1,5 +1,5 @@
 server:
-  port: 8020  # Ensure it’s not using the same port as Auth Service
+  port: 8020
 
 spring:
   application:
@@ -14,5 +14,5 @@ eureka:
 
   instance:
     prefer-ip-address: true
-    lease-renewal-interval-in-seconds: 30  # Sends heartbeats every 30 sec
-    lease-expiration-duration-in-seconds: 90    # Expiry time for removing dead instances
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
