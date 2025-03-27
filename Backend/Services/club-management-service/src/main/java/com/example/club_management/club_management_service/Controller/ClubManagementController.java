@@ -17,7 +17,7 @@ import java.util.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/club-management-service")
+@RequestMapping("/api/club-management")
 public class ClubManagementController {
 
     private final clubManagementService clubService;
@@ -33,16 +33,18 @@ public class ClubManagementController {
     }
 
 
-    @PostMapping("/clubs/{userId}") // Create a new club
-    public ResponseEntity <Map<String, Object>> createClub(@PathVariable UUID userId , @RequestBody ClubDTO clubDTO){
-        System.out.println("Club name"+clubDTO.getName());
-        System.out.println("Club dec" +clubDTO.getDescription());
-        System.out.println("Club cat"+clubDTO.getCategory());
-        System.out.println("Club college "+clubDTO.getCollege());
-        System.out.println("Club logo "+clubDTO.getLogoUrl());
-        System.out.println("Club banner "+clubDTO.getBannerUrl());
-        System.out.println("Club visible "+clubDTO.getVisibility());
-        System.out.println("Club founder email "+clubDTO.getFounderEmail());
+    @PostMapping("/create-club") // Create a new club
+    public ResponseEntity <Map<String, Object>> createClub(@RequestHeader("userId") String userId , @RequestBody ClubDTO clubDTO){
+        System.out.println("Club name = "+clubDTO.getName());
+        System.out.println("Club decs = " +clubDTO.getDescription());
+        System.out.println("Club category =  "+clubDTO.getCategory());
+        System.out.println("Club college =  "+clubDTO.getCollege());
+        System.out.println("Club logo =  "+clubDTO.getLogoUrl());
+        System.out.println("Club City =  "+clubDTO.getClubCity());
+        System.out.println("Club State =  "+clubDTO.getClubState());
+        System.out.println("Club banner =  "+clubDTO.getBannerUrl());
+        System.out.println("Club visible =  "+clubDTO.getVisibility());
+        System.out.println("Club founder email =  "+clubDTO.getFounderEmail());
 
         Map<String, Object> response = new HashMap<>();
 
@@ -65,11 +67,13 @@ public class ClubManagementController {
             response.put("error", "Club's College name is required");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        ClubModel newClub = clubService.createClub(userId, clubDTO);
+        ClubModel newClub = clubService.createClub(UUID.fromString(userId), clubDTO);
 
         response.put("Name", newClub.getName());
         response.put("Description", newClub.getDescription());
         response.put("LogoUrl", newClub.getLogoUrl());
+        response.put("city", newClub.getClubCity());
+        response.put("state", newClub.getClubState());
         response.put("BannerUrl", newClub.getBannerUrl());
         response.put("Category", newClub.getCategory());
         response.put("College name", newClub.getCollege());
