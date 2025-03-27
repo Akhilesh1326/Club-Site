@@ -39,6 +39,10 @@ public class ClubModel {
 
     private String clubFounderEmail;
 
+    private String clubCity;
+
+    private String clubState;
+
     @Column(nullable = true)
     private String clubEmail;
     private String socialLinks; // Yet to implement
@@ -95,6 +99,7 @@ public class ClubModel {
         Literary,
         Social,
         Service,
+        Environment,
     }
 
     public Category getCategory() {
@@ -137,6 +142,21 @@ public class ClubModel {
     }
     public String getFounderEmail(){
         return this.clubFounderEmail;
+    }
+
+
+    public void setClubCity(String clubCity){
+        this.clubCity = clubCity;
+    }
+    public String getClubCity(){
+        return this.clubCity;
+    }
+
+    public void setClubState(String clubState){
+        this.clubState = clubState;
+    }
+    public String getClubState(){
+        return this.clubState;
     }
 }
 
