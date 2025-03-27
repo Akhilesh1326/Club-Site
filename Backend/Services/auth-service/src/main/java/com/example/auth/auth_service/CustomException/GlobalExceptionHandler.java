@@ -26,4 +26,12 @@ public class GlobalExceptionHandler {
         response.put("message", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
+
+    @ExceptionHandler(com.example.auth.auth_service.CustomException.UserAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleUserAlreadyExistsException(com.example.auth.auth_service.CustomException.UserAlreadyExistsException ex){
+        Map<String, String> res = new HashMap<>();
+        res.put("error", "Conflict");
+        res.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(res);
+    }
 }
