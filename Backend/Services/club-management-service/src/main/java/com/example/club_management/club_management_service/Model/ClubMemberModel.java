@@ -24,8 +24,7 @@ public class ClubMemberModel {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Field("hierarchy")
-    private Hierarchy hierarchy;
+    private String hierarchy;
 
     // Enums
     public enum Role {
@@ -64,12 +63,6 @@ public class ClubMemberModel {
     // Constructors
     public ClubMemberModel() {}
 
-    public ClubMemberModel(UUID userId, UUID clubId, Role role, Hierarchy hierarchy) {
-        this.userId = userId;
-        this.clubId = clubId;
-        this.role = role;
-        this.hierarchy = hierarchy;
-    }
 
     // Getters and Setters
     public String getId() {
@@ -104,11 +97,11 @@ public class ClubMemberModel {
         this.role = role;
     }
 
-    public Hierarchy getHierarchy() {
+    public String getHierarchy() {
         return hierarchy;
     }
 
-    public void setHierarchy(Hierarchy hierarchy) {
+    public void setHierarchy(String hierarchy) {
         this.hierarchy = hierarchy;
     }
 }
