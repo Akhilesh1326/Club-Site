@@ -1,6 +1,7 @@
 package com.example.auth.auth_service.Controller;
 
 import com.example.auth.auth_service.DTO.AuthUserDTO;
+import com.example.auth.auth_service.DTO.UserInfoDTO;
 import com.example.auth.auth_service.Model.Auth_Users;
 import com.example.auth.auth_service.Repo.AuthUserRepository;
 import com.example.auth.auth_service.Service.AuthUserService;
@@ -11,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -150,6 +148,16 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/get-users/id/{id}")
+    public List<UserInfoDTO> getUserInBulk(@RequestBody List<UUID> Members) {
+        System.out.println("Hello from get");
+
+        List<UserInfoDTO> users = authUserService.getUserDetailsByIds(Members);
+        System.out.println(users);
+        return users;
+
+    }
+
     @GetMapping("/auth-user/name/{name}")
     public ResponseEntity<String> getUserByName(@PathVariable String name){
         Optional<Auth_Users> user = authUserService.getUserByUserName(name);
@@ -194,6 +202,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Optional.empty());
         }
     }
+
+
 
     @PatchMapping("/update-user/{userId}")
     public ResponseEntity<String> updateUser(@PathVariable UUID userId, @RequestBody AuthUserDTO userDTO){
