@@ -7,6 +7,7 @@ import com.example.club_management.club_management_service.Model.ClubModel;
 import com.example.club_management.club_management_service.Repo.ClubManagementRepo;
 import com.example.club_management.club_management_service.Repo.ClubMemberRepo;
 import com.example.club_management.club_management_service.Services.clubManagementService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -86,13 +87,20 @@ public class ClubManagementController {
 
     @GetMapping("/clubs") //Fetch all clubs
     public ResponseEntity<List<ClubModel>> getAllClubs(){
+        System.out.println("hello");
         List<ClubModel> clubs = clubService.getAllClubs();
         return ResponseEntity.ok(clubs);
     }
 
-    @GetMapping("/clubs/clubId/{clubId}") //Fetch a specific club by id
-    public ResponseEntity<Optional<ClubModel>> getClubByClubId(@PathVariable UUID clubId){
-        Optional<ClubModel> club = clubService.getClubById(clubId);
+    @GetMapping("/get-greet")
+    public String get(){
+        return "hello mhy bou";
+    }
+
+    @GetMapping("/get-club/{clubId}") //Fetch a specific club by id
+    public ResponseEntity<Optional<ClubModel>> getClubByClubId(@PathVariable String clubId){
+        System.out.println(clubId);
+        Optional<ClubModel> club = clubService.getClubById(UUID.fromString(clubId));
         if(club.isPresent()){
             return ResponseEntity.ok(club);
         }
@@ -140,7 +148,7 @@ public class ClubManagementController {
     }
 
 
-//    ###### Member route controller ############################
+//    ##################### Member route controller ############################
 
 
     @PostMapping("clubs/add-members/") //Add a member to a club
@@ -148,7 +156,7 @@ public class ClubManagementController {
         System.out.println("User id "+ clubMemberDTO.getUserId());
         System.out.println("Club id "+ clubMemberDTO.getClubId());
         System.out.println("Role "+ clubMemberDTO.getRole());
-        System.out.println("Hierarchy "+ clubMemberDTO.getHierarchy());
+//        System.out.println("Hierarchy "+ clubMemberDTO.getHierarchy());
 
         Map<String, Object> res = new HashMap<>();
         if(clubMemberDTO.getClubId() == null){
@@ -163,10 +171,10 @@ public class ClubManagementController {
             res.put("Error ", "Role is required");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
-        if(clubMemberDTO.getHierarchy() == null || clubMemberDTO.getHierarchy().trim().isEmpty()){
-            res.put("Error ", "Hierarchy of role is required");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
-        }
+//        if(clubMemberDTO.getHierarchy() == null || clubMemberDTO.getHierarchy().trim().isEmpty()){
+//            res.put("Error ", "Hierarchy of role is required");
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+//        }
         ClubMemberModel newClubMember = clubService.addClubMembers(clubMemberDTO);
         res.put("Id ", newClubMember.getId());
         res.put("User Id",newClubMember.getUserId());
@@ -178,10 +186,9 @@ public class ClubManagementController {
 
     }
 
-    @GetMapping("/clubs/club-members/{clubId}") //Fetch members of a club
-    public ResponseEntity<List<ClubMemberModel>> getClubMemberByClubId(@PathVariable UUID clubId){
-        List<ClubMemberModel> members = clubService.getMemberByClubId(clubId);
-        return ResponseEntity.ok(members);
+    @GetMapping("/club-members/{clubId}") //Fetch members of a club
+    public Map<String, Object> getClubMemberByClubId(@PathVariable UUID clubId, HttpServletRequest request){
+       return clubService.getClubMemberByClubId(clubId, request);
     }
 
     @DeleteMapping("/clubs/club-member-delete")
@@ -210,9 +217,9 @@ public class ClubManagementController {
             patchMember.setRole(convertToRole(clubMemberDTO.getRole()));
         }
 
-        if(patchMember.getHierarchy() != null){
-            patchMember.setHierarchy(convertToHierarchy(clubMemberDTO.getHierarchy()));
-        }
+//        if(patchMember.getHierarchy() != null){
+//            patchMember.setHierarchy(convertToHierarchy(clubMemberDTO.getHierarchy()));
+//        }
         ClubMemberModel updatedMember = clubMemberRepo.save(patchMember);
         return ResponseEntity.ok(updatedMember);
     }
