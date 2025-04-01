@@ -8,12 +8,14 @@ import com.example.club_management.club_management_service.Model.ClubMemberModel
 import com.example.club_management.club_management_service.Model.ClubModel;
 import com.example.club_management.club_management_service.Repo.ClubManagementRepo;
 import com.example.club_management.club_management_service.Repo.ClubMemberRepo;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.HttpHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -21,10 +23,13 @@ public class clubManagementService {
     private final ClubManagementRepo clubRepo;
 //    private final clubServiceClient clubClient;
     private final ClubMemberRepo clubMemberRepo;
+    @Autowired
+    private WebClient.Builder webClientBuilder;
 
-    public clubManagementService(ClubManagementRepo clubRepo, ClubMemberRepo clubMemberRepo) {
+    public clubManagementService(ClubManagementRepo clubRepo, ClubMemberRepo clubMemberRepo, WebClient.Builder webClientBuilder) {
         this.clubRepo = clubRepo;
         this.clubMemberRepo = clubMemberRepo;
+//        this.webClientBuilder
     }
 
     public ClubModel createClub(UUID userId, ClubDTO clubDTO){
@@ -80,6 +85,7 @@ public class clubManagementService {
     }
 
     public Optional<ClubModel> getClubById(UUID clubId){
+
         return clubRepo.findClubById(clubId);
     }
 
@@ -93,14 +99,44 @@ public class clubManagementService {
 
     public ClubMemberModel addClubMembers(ClubMemberDTO clubMemberDTO){
 
-
         ClubMemberModel clubMemberModel = new ClubMemberModel();
         clubMemberModel.setUserId(clubMemberDTO.getUserId());
         clubMemberModel.setClubId(clubMemberDTO.getClubId());
         clubMemberModel.setRole(convertToRole(clubMemberDTO.getRole()));
-        clubMemberModel.setHierarchy(convertToHierarchy(clubMemberDTO.getHierarchy()));
+        clubMemberModel.setHierarchy(getHierarchyByRole(clubMemberDTO.getRole()));
+//      Hierarchy enum is removed and now it's purely based on what role is coming and switch statement so it can be more
+//      for use to automatically get hierarchy
 
         return clubMemberRepo.save(clubMemberModel);
+
+    }
+
+    private String getHierarchyByRole(String role){
+        switch (role){
+            case "President", "VicePresident", "Secretary", "Treasurer" -> {
+                return "Core_Positions";
+            }
+
+            case "Event_Coordinator", "Public_Relations_Officer", "Marketing_Head", "Sponsorship_Coordinator"->{
+                return "Management_Event_Specific_Roles";
+            }
+
+            case "Technical_Lead", "Content_Writer", "Design_Head", "Webmaster" ->{
+                return "Technical_Creative_Roles";
+            }
+
+            case "Membership_Coordinator", "Community_Manager", "Volunteer_Coordinator"->{
+                return "Membership_Outreach_Roles";
+            }
+
+            case "Research_Head", "Sports_Coordinator", "Cultural_Head"->{
+                return "Specialized_Roles";
+            }
+
+            default ->{
+                throw new IllegalArgumentException("Unknown role type"+ role);
+            }
+        }
 
     }
 
@@ -121,9 +157,38 @@ public class clubManagementService {
     }
 
 
-    public List<ClubMemberModel> getMemberByClubId(UUID clubId) {
-        return clubMemberRepo.findByClubId(clubId);
+    public Map<String, Object> getClubMemberByClubId(UUID clubId, HttpServletRequest request) {
+        // Fetch members from the database
+        List<ClubMemberModel> members = clubMemberRepo.findByClubId(clubId);
+        String jwtToken = extractJwtToken(request);
+
+        List<UUID> memberIds = members.stream()
+                .map(ClubMemberModel::getUserId)
+                .collect(Collectors.toList());
+
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("MemberId",members);
+        map.put("MemberDetails", webClientBuilder.build()
+                .post()
+                .uri("http://ORDER-SERVICE/api/orders/members")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken) // Pass JWT token
+                .bodyValue(memberIds) // Send the list of IDs
+                .retrieve()
+                .bodyToFlux(ClubMemberModel.class) // If expecting a list of Order objects
+                .collectList()
+                .block());
+
+        return map;
     }
+    private String extractJwtToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7); // Remove "Bearer " to get the actual token
+        }
+        throw new RuntimeException("JWT Token is missing or invalid!");
+    }
+
 
     public Optional<ClubMemberModel> deleteMember(UUID userId, UUID clubId) {
         return clubMemberRepo.deleteByUserIdAndClubId(userId, clubId);
