@@ -18,6 +18,27 @@ public class AuthUserDTO {
     private String role;
     private String phoneNumber;
     private String profile_picture_url;
+    private String state;
+    private String city;
+    private String department;
+    private String year;
+
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getYear() {
+        return year;
+    }
 
     public void setProfile_picture_url(String profile_picture_url){
         this.profile_picture_url = profile_picture_url;
@@ -87,6 +108,10 @@ public class AuthUserDTO {
                 ", role ='" + role + '\'' +
                 ", phone  ='" + phoneNumber + '\'' +
                 ", dob ='" + DOB + '\'' +
+                ", state ='" + state + '\'' +
+                ", city ='" + city + '\'' +
+                ", dept ='" + department + '\'' +
+                ", yyear ='" + year + '\'' +
                 ", scool ='" + collegeOrUniversityName + '\'' +
                 '}';
     }
