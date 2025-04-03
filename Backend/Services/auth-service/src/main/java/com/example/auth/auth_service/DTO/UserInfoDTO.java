@@ -1,6 +1,9 @@
 package com.example.auth.auth_service.DTO;
 
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.example.auth.auth_service.Model.Auth_Users.Role;
 
 public class UserInfoDTO {
     private UUID id;
@@ -8,11 +11,33 @@ public class UserInfoDTO {
     private String lastName;
     private String role;
     private String profilePictureUrl;
-    private int year;
+    private Integer year;
     private String department;
 
+    // Default constructor for frameworks
+    public UserInfoDTO() {
+    }
+
+    // Annotated constructor for deserialization
+    @JsonCreator
+    public UserInfoDTO(
+            @JsonProperty("id") UUID id,
+            @JsonProperty("firstName") String firstName,
+            @JsonProperty("lastName") String lastName,
+            @JsonProperty("role") Role roleEnum,
+            @JsonProperty("profilePictureUrl") String profilePictureUrl) {
+
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = roleEnum.toString();
+        this.profilePictureUrl = profilePictureUrl;
+
+    }
+
+    // Original constructor
     public UserInfoDTO(UUID id, String firstName, String lastName, String role,
-                       String profilePictureUrl, int year, String department) {
+                       String profilePictureUrl, Integer year, String department) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -22,8 +47,7 @@ public class UserInfoDTO {
         this.department = department;
     }
 
-
-    // Getters and Setters
+    // Getters and Setters remain the same
     public UUID getId() {
         return id;
     }
@@ -60,11 +84,11 @@ public class UserInfoDTO {
         this.profilePictureUrl = profileUrl;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 
