@@ -1,7 +1,6 @@
 package com.example.auth.auth_service.Controller;
 
 import com.example.auth.auth_service.DTO.AuthUserDTO;
-import com.example.auth.auth_service.DTO.UserInfoDTO;
 import com.example.auth.auth_service.Model.Auth_Users;
 import com.example.auth.auth_service.Repo.AuthUserRepository;
 import com.example.auth.auth_service.Service.AuthUserService;
@@ -36,6 +35,7 @@ public class AuthController {
     public Map<String, String> getIdByUsername(@RequestBody Map<String, String> request) {
         String userName = request.get("userName");
         Optional<Auth_Users> userData = authUserService.getUserByUserName(userName);
+        Map<String, String> map = new HashMap<>();
 
         if (userData.isEmpty()) {
             throw new RuntimeException("User not found");
@@ -44,7 +44,6 @@ public class AuthController {
         String userId = userData.get().getUserId().toString();
         System.out.println("auth data = " + userId);
 
-        Map<String, String> map = new HashMap<>();
         map.put("userId", userId);
         return map;
     }
@@ -52,10 +51,13 @@ public class AuthController {
     @PostMapping("/login")
     public String login(@RequestBody AuthUserDTO authUserDTO, HttpServletResponse response) {
         // Verify user and get response (could be a token, userId, etc.)
+        System.out.println("got called to login ");
         String authResponse = authUserService.verify(authUserDTO);
+        System.out.println("Auth Response: " + authResponse);
 
         // Create a cookie with the auth response or token
         Cookie cookie = new Cookie("authToken", authResponse);
+
 
         // Set cookie properties
         cookie.setHttpOnly(true); // Secure, prevents JS access
@@ -148,15 +150,6 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/get-users/id/{id}")
-    public List<UserInfoDTO> getUserInBulk(@RequestBody List<UUID> Members) {
-        System.out.println("Hello from get");
-
-        List<UserInfoDTO> users = authUserService.getUserDetailsByIds(Members);
-        System.out.println(users);
-        return users;
-
-    }
 
     @GetMapping("/auth-user/name/{name}")
     public ResponseEntity<String> getUserByName(@PathVariable String name){
