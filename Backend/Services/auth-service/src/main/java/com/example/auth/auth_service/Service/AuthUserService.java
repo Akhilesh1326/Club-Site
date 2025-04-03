@@ -4,6 +4,7 @@ package com.example.auth.auth_service.Service;
 import com.example.auth.auth_service.CustomException.EmailAlreadyExistsException;
 import com.example.auth.auth_service.CustomException.UserNameAlreadyExistsException;
 import com.example.auth.auth_service.DTO.AuthUserDTO;
+import com.example.auth.auth_service.DTO.UserInfoDTO;
 import com.example.auth.auth_service.Model.Auth_Users;
 import com.example.auth.auth_service.Repo.AuthUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -65,12 +67,19 @@ public class AuthUserService {
         users.setCollegeOrUniversityName(authUserDTO.getCollegeOrUniversityName());
         users.setPhoneNumber(authUserDTO.getPhoneNumber());
         users.setProfilePictureUrl(authUserDTO.getProfile_picture_url());
+        users.setCity(authUserDTO.getCity());
+        users.setState(authUserDTO.getState());
+        users.setDepartment(authUserDTO.getDepartment());
+        users.setYear(authUserDTO.getYear());
 
         authUserRepository.save(users);
     }
 
     public Optional<Auth_Users> getUserById(UUID id){
         return authUserRepository.findUserById(id);
+    }
+    public List<UserInfoDTO> getUserDetailsByIds(List<UUID> memberIds) {
+        return authUserRepository.findUserDetailsByIds(memberIds);
     }
 
     public Optional<Auth_Users> getUserByUserName(String name) {
