@@ -187,8 +187,10 @@ public class ClubManagementController {
     }
 
     @GetMapping("/club-members/{clubId}") //Fetch members of a club
-    public Map<String, Object> getClubMemberByClubId(@PathVariable UUID clubId, HttpServletRequest request){
-       return clubService.getClubMemberByClubId(clubId, request);
+    public Map<String, Object> getClubMemberByClubId(@PathVariable UUID clubId){
+        System.out.println("clubid = "+ clubId);
+//        System.out.println("req = "+ request);
+       return clubService.getClubMemberByClubId(clubId);
     }
 
     @DeleteMapping("/clubs/club-member-delete")
