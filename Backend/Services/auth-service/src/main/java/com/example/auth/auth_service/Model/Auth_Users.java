@@ -54,6 +54,17 @@ public class Auth_Users {
     @Column(name = "profile_picture_url", nullable = true)
     private String profilePictureUrl;
 
+    @Column
+    private Integer year;
+
+    @Column
+    private String department;
+
+    @Column
+    private String state;
+
+    @Column String city;
+
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -169,5 +180,34 @@ public class Auth_Users {
     }
     public String getLastName() {
         return this.lastName;
+    }
+
+    public void setYear(Integer year){
+        this.year = year;
+    }
+    public Integer getYear(){
+        return this.year;
+    }
+
+    public void setDepartment(String department){
+        this.department = department;
+    }
+    public String getDepartment(){
+        return this.department;
+    }
+
+
+    public void setState(String state){
+        this.state = state;
+    }
+    public String getState(){
+        return this.state;
+    }
+
+    public void setCity(String city){
+        this.city = city;
+    }
+    public String getCity(){
+        return this.city;
     }
 }
