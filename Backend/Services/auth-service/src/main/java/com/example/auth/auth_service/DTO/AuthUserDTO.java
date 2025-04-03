@@ -21,7 +21,7 @@ public class AuthUserDTO {
     private String state;
     private String city;
     private String department;
-    private String year;
+    private Integer year;
 
 
     public String getCity() {
@@ -36,7 +36,7 @@ public class AuthUserDTO {
         return state;
     }
 
-    public String getYear() {
+    public Integer getYear() {
         return year;
     }
 
