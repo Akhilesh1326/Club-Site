@@ -11,7 +11,10 @@ import com.example.club_management.club_management_service.Repo.ClubMemberRepo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
@@ -23,13 +26,13 @@ public class clubManagementService {
     private final ClubManagementRepo clubRepo;
 //    private final clubServiceClient clubClient;
     private final ClubMemberRepo clubMemberRepo;
+
     @Autowired
     private WebClient.Builder webClientBuilder;
 
-    public clubManagementService(ClubManagementRepo clubRepo, ClubMemberRepo clubMemberRepo, WebClient.Builder webClientBuilder) {
+    public clubManagementService(ClubManagementRepo clubRepo, ClubMemberRepo clubMemberRepo) {
         this.clubRepo = clubRepo;
         this.clubMemberRepo = clubMemberRepo;
-//        this.webClientBuilder
     }
 
     public ClubModel createClub(UUID userId, ClubDTO clubDTO){
@@ -97,7 +100,7 @@ public class clubManagementService {
         return clubRepo.findByClubName(name);
     }
 
-    public ClubMemberModel addClubMembers(ClubMemberDTO clubMemberDTO){
+    public ClubMemberModel  addClubMembers(ClubMemberDTO clubMemberDTO){
 
         ClubMemberModel clubMemberModel = new ClubMemberModel();
         clubMemberModel.setUserId(clubMemberDTO.getUserId());
@@ -156,31 +159,43 @@ public class clubManagementService {
         }
     }
 
+// Internal communication service
+ // Make sure to define this as a bean in your config.
 
-    public Map<String, Object> getClubMemberByClubId(UUID clubId, HttpServletRequest request) {
-        // Fetch members from the database
+    public Map<String, Object> getClubMemberByClubId(UUID clubId) {
+        System.out.println("hello 1");
         List<ClubMemberModel> members = clubMemberRepo.findByClubId(clubId);
-        String jwtToken = extractJwtToken(request);
+        System.out.println("hello 2");
 
         List<UUID> memberIds = members.stream()
                 .map(ClubMemberModel::getUserId)
                 .collect(Collectors.toList());
 
         Map<String, Object> map = new HashMap<>();
+        System.out.println("all members for this call  = " + memberIds);
+        for(UUID id : memberIds){
+            System.out.println("member id = " + id); // Fixed to print individual id
+        }
+        System.out.println("hello 3");
 
-        map.put("MemberId",members);
-        map.put("MemberDetails", webClientBuilder.build()
+        map.put("MemberId", memberIds);
+
+        // Direct API call without service discovery
+        List<Object> memberDetails = webClientBuilder.build()
                 .post()
-                .uri("http://ORDER-SERVICE/api/orders/members")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken) // Pass JWT token
-                .bodyValue(memberIds) // Send the list of IDs
+                .uri("http://localhost:8000/api/internal-auth-service/get-users") // Direct URL
+                .bodyValue(memberIds)
                 .retrieve()
-                .bodyToFlux(ClubMemberModel.class) // If expecting a list of Order objects
+                .bodyToFlux(Object.class)
                 .collectList()
-                .block());
+                .block();
+
+        map.put("MemberDetails", memberDetails);
 
         return map;
     }
+
+
     private String extractJwtToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
