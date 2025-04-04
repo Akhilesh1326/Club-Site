@@ -1,4 +1,3 @@
-import {useState} from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
@@ -25,11 +24,11 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-extrabold">Where Clubs Unite and Shine!</h1>
           <p className="mt-4 text-lg">
-            Connect with your campus community and showcase your club's
+            Connect with your campus community and showcase your club{"'"}s
             achievements.
           </p>
           <div className="mt-6 sm:space-x-4 sm:flex sm:justify-center grid grid-cols-1 gap-5 mx-10 sm:mx-0">
-            <a onClick={()=>{navigate('/sign-in')}} href="#"  className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">Promote Your Event</a>
+            <a onClick={()=>{navigate('/log-in')}} href="#"  className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">Promote Your Event</a>
             <a  href="#"  className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">Explore Clubs</a>
             <a  href="#"  className="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">Join a Community</a>
           </div>
