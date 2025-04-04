@@ -8,10 +8,9 @@ import HomePage from "./src/pages/HomePage.jsx";
 import ClubsPage from "./src/pages/ClubsPage.jsx";
 import ExplorePage from "./src/pages/ExplorePage.jsx";
 import InternalCommunityPage from "./src/pages/InternalCommunityPage.jsx";
-import ClubLeaderDashboard from "./src/features/dashboard/ClubLeaderDashboard.jsx";
+import Dashboard from "./src/features/dashboard/Dashboard.jsx";
 
-import AdminProfile from "./src/components/profile/AdminProfile.jsx";
-import ModeratorProfile from "./src/components/profile/ModeratorProfile.jsx";
+
 
 const router = createBrowserRouter([
     { path: "/", element: <LandingPage /> },
@@ -20,10 +19,8 @@ const router = createBrowserRouter([
     { path: "/home", element: <HomePage/>},
     { path: "/explore", element: <ExplorePage/>},
     { path: "/community", element: <InternalCommunityPage/>},
-    { path: "/clubs", element: <ClubsPage/>},
-    { path: "/admin", element: <AdminProfile/>},
-    { path: "/mod", element: <ModeratorProfile/>},
-    { path: "/club-leader-dashboard", element: <ClubLeaderDashboard/>}, 
+    { path: "/club-page", element: <ClubsPage/>},
+    { path: "/dashboard", element: <Dashboard/>}, 
   ])
 
 export default router;
