@@ -2,22 +2,8 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
-import {
-  TextField,
-  Button,
-  Paper,
-  Typography,
-  Grid,
-  MenuItem,
-  InputAdornment,
-  IconButton,
-  FormControl,
-  InputLabel,
-  Select,
-  Box,
-  Avatar,
-} from "@mui/material"
-import { Visibility, VisibilityOff, CloudUpload, Air } from "@mui/icons-material"
+import {TextField,Button,Paper,Typography,Grid,MenuItem,InputAdornment,IconButton,FormControl,InputLabel,Select,Box, Avatar,} from "@mui/material"
+import { Visibility, VisibilityOff, CloudUpload } from "@mui/icons-material"
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
