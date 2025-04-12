@@ -1,8 +1,10 @@
 package com.example.event_management.event_management_service.Model;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
+
 
 @Entity
 @Table(name="events")
@@ -37,8 +39,9 @@ public class EventManagementModel {
     @Column(nullable = false)
     private Boolean registrationRequired;
 
-
     private Integer maxParticipants;
+
+    private EventType eventType;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -66,6 +69,10 @@ public class EventManagementModel {
         return this.description;
     }
 
+    public enum EventType{
+        College_Level,
+        Global_Level
+    }
 
     public enum Category{
         Workshop,
@@ -141,35 +148,9 @@ public class EventManagementModel {
         return this.maxParticipants;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public void setEventType(EventType eventType){
+        this.eventType = eventType;
+    }
 
 
 
