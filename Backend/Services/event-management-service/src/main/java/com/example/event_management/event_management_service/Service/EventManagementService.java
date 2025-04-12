@@ -1,10 +1,7 @@
 package com.example.event_management.event_management_service.Service;
 
-import com.example.event_management.event_management_service.Controller.EventManagementController;
 import com.example.event_management.event_management_service.DTO.EventManagementDTO;
-import com.example.event_management.event_management_service.DTO.EventParticipantsDTO;
 import com.example.event_management.event_management_service.Model.EventManagementModel;
-import com.example.event_management.event_management_service.Model.EventParticipantsModel;
 import com.example.event_management.event_management_service.Repo.EventManagementRepo;
 import com.example.event_management.event_management_service.Repo.EventParticipantsRepo;
 import org.springframework.stereotype.Service;
@@ -22,7 +19,7 @@ public class EventManagementService {
         this.eventParticipantsRepo = eventParticipantsRepo;
     }
 
-    public EventManagementModel createEvent(EventManagementDTO eventManagementDTO){
+    public EventManagementModel createEvent(UUID userId, EventManagementDTO eventManagementDTO){
         EventManagementModel eventManagementModel = new EventManagementModel();
         eventManagementModel.setTitle(eventManagementDTO.getTitle());
         eventManagementModel.setDescription(eventManagementDTO.getDescription());
@@ -30,10 +27,11 @@ public class EventManagementService {
         eventManagementModel.setStartTime(eventManagementDTO.getStartTime());
         eventManagementModel.setEndTime(eventManagementDTO.getEndTime());
         eventManagementModel.setLocation(eventManagementDTO.getLocation());
-        eventManagementModel.setOrganizerId(convertToUUID(eventManagementDTO.getOrganizerId()));
+        eventManagementModel.setOrganizerId(userId);
         eventManagementModel.setClubId(convertToUUID(eventManagementDTO.getClubId()));
         eventManagementModel.setRegistrationRequired(convertToBoolean(eventManagementDTO.getRegistrationRequired()));
         eventManagementModel.setMaxParticipants(convertToInteger(eventManagementDTO.getMaxParticipants()));
+        eventManagementModel.setEventType(convertToEventType(eventManagementDTO.getEventType()));
 
         return eventManagementRepo.save(eventManagementModel);
     }
@@ -41,8 +39,6 @@ public class EventManagementService {
     public List<EventManagementModel> getAllEvents(){
         return eventManagementRepo.findAll();
     }
-
-    public 
 
 
 
@@ -52,6 +48,14 @@ public class EventManagementService {
         }catch (IllegalArgumentException e)
         {
             throw new RuntimeException("Invalid Category");
+        }
+    }
+    private EventManagementModel.EventType convertToEventType(String eventType){
+        try{
+            return EventManagementModel.EventType.valueOf(eventType);
+        }
+        catch (IllegalArgumentException e){
+            throw new RuntimeException("Invalid EventType");
         }
     }
     private UUID convertToUUID(String id){
@@ -65,7 +69,7 @@ public class EventManagementService {
     }
 
 
-    public List<EventManagementModel> getEventByCategory(String category) {
-        return EventManagementRepo.findByCategory(category);
-    }
+//    public List<EventManagementModel> getEventByCategory(String category) {
+//        return EventManagementRepo.findByCategory(category);
+//    }
 }
