@@ -3,7 +3,6 @@ package com.example.club_management.club_management_service.Services;
 
 import com.example.club_management.club_management_service.DTO.ClubDTO;
 import com.example.club_management.club_management_service.DTO.ClubMemberDTO;
-//import com.example.club_management.club_management_service.FeignClient.clubServiceClient;
 import com.example.club_management.club_management_service.Model.ClubMemberModel;
 import com.example.club_management.club_management_service.Model.ClubModel;
 import com.example.club_management.club_management_service.Repo.ClubManagementRepo;
@@ -11,10 +10,7 @@ import com.example.club_management.club_management_service.Repo.ClubMemberRepo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
