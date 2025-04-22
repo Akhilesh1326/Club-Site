@@ -8,6 +8,7 @@ export default function Sidebar({ activeSection, setActiveSection, accessibleSec
     { id: "profile", name: "Profile", icon: User },
     { id: "settings", name: "Settings", icon: SettingsIcon },
     { id: "analytics", name: "Analytics", icon: BarChart2 },
+    { id: "club dashboard", name: "Club Dashboard", icon:BarChart2 },
   ]
 
   return (
