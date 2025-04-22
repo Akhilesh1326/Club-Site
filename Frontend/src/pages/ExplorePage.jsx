@@ -141,7 +141,7 @@ export default function ExplorePage() {
                 >
                   <CardActionArea sx={{ flexGrow: 1, display: "flex", flexDirection: "column", alignItems: "stretch" }}>
                     <CardMedia
-                    onClick={()=>navigate('/club-page', {state:{clubId: club.id}})}
+                    onClick={()=>navigate('/club-page', {state:{clubId: club.id, clubInfo: club}})}
                       component="img"
                       sx={{
                         height: 180,
