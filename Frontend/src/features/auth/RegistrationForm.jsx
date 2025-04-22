@@ -2,7 +2,21 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
-import {TextField,Button,Paper,Typography,Grid,MenuItem,InputAdornment,IconButton,FormControl,InputLabel,Select,Box, Avatar,} from "@mui/material"
+import {
+  TextField,
+  Button,
+  Paper,
+  Typography,
+  Grid,
+  MenuItem,
+  InputAdornment,
+  IconButton,
+  FormControl,
+  InputLabel,
+  Select,
+  Box,
+  Avatar,
+} from "@mui/material"
 import { Visibility, VisibilityOff, CloudUpload } from "@mui/icons-material"
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
@@ -10,7 +24,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import dayjs from "dayjs"
 
 function RegistrationForm() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     userName: "",
     email: "",
@@ -22,6 +36,10 @@ function RegistrationForm() {
     role: "",
     phoneNumber: "",
     profile_picture_url: "",
+    state: "",
+    city: "",
+    department: "",
+    year: "",
   })
 
   const [showPassword, setShowPassword] = useState(false)
@@ -56,7 +74,7 @@ function RegistrationForm() {
     }
   }
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const formattedData = {
       ...formData,
@@ -65,29 +83,35 @@ function RegistrationForm() {
     console.log("Form submitted:", formattedData)
 
     try {
-      const response = await axios.post("/api/auth-service/register",{
-        userName: formData.userName,
-        email: formData.email,
-        password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        DOB: formattedData.DOB,
-        collegeOrUniversityName: formData.collegeOrUniversityName,
-        role: formData.role,
-        phoneNumber: formData.phoneNumber,
-        profile_picture_url: formData.profile_picture_url,
-      },
-    {
-      withCredentials: true,
-    });
+      const response = await axios.post(
+        "/api/auth-service/register",
+        {
+          userName: formData.userName,
+          email: formData.email,
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          DOB: formattedData.DOB,
+          collegeOrUniversityName: formData.collegeOrUniversityName,
+          role: formData.role,
+          phoneNumber: formData.phoneNumber,
+          profile_picture_url: formData.profile_picture_url,
+          state: formData.state,
+          city: formData.city,
+          department: formData.department,
+          year: formData.year,
+        },
+        {
+          withCredentials: true,
+        },
+      )
 
-      console.log("resp data = ",response.data);
-      if(response.data.status === "success"){
+      console.log("resp data = ", response.data)
+      if (response.data.status == "Success" || response.data.status == "success") {
         navigate("/home")
       }
-
     } catch (error) {
-      console.log("Registration failed = ", error.response?.data || error);
+      console.log("Registration failed = ", error.response?.data || error)
     }
   }
 
@@ -255,6 +279,56 @@ function RegistrationForm() {
                   ))}
                 </Select>
               </FormControl>
+            </Grid>
+
+            {/* State */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="State"
+                name="state"
+                value={formData.state}
+                onChange={handleInputChange}
+                variant="outlined"
+              />
+            </Grid>
+
+            {/* City */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="City"
+                name="city"
+                value={formData.city}
+                onChange={handleInputChange}
+                variant="outlined"
+              />
+            </Grid>
+
+            {/* Department */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Department"
+                name="department"
+                value={formData.department}
+                onChange={handleInputChange}
+                variant="outlined"
+              />
+            </Grid>
+
+            {/* Year (Integer) */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Year Of Degree"
+                name="year"
+                type="number"
+                value={formData.year}
+                onChange={handleInputChange}
+                variant="outlined"
+                inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              />
             </Grid>
 
             {/* Profile Picture */}
