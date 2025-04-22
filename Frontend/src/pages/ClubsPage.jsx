@@ -40,6 +40,74 @@ import axios from "axios"
 
 
 // Mock data (replace with actual API call)
+const mockEvents = [
+  {
+    id: "e1",
+    title: "Annual Hackathon 2023",
+    date: "2023-11-15",
+    time: "9:00 AM - 9:00 PM",
+    location: "Main Campus, Building A",
+    description: "A 12-hour coding competition where teams build innovative solutions to real-world problems.",
+    image: "/images/event1.jpg",
+    isUpcoming: true,
+  },
+  {
+    id: "e2",
+    title: "Workshop: Intro to AI",
+    date: "2023-10-25",
+    time: "3:00 PM - 5:00 PM",
+    location: "Tech Lab, Building B",
+    description: "Learn the basics of artificial intelligence and machine learning in this hands-on workshop.",
+    image: "/images/event2.jpg",
+    isUpcoming: true,
+  },
+  {
+    id: "e3",
+    title: "Tech Talk: Future of Web Development",
+    date: "2023-09-10",
+    time: "4:00 PM - 6:00 PM",
+    location: "Auditorium C",
+    description: "Industry experts discuss the latest trends and future of web development.",
+    image: "/images/event3.jpg",
+    isUpcoming: false,
+  },
+  {
+    id: "e4",
+    title: "Coding Bootcamp",
+    date: "2023-08-05",
+    time: "10:00 AM - 4:00 PM",
+    location: "Computer Lab",
+    description: "Intensive coding session for beginners to learn programming fundamentals.",
+    image: "/images/event4.jpg",
+    isUpcoming: false,
+  },
+]
+
+
+const mockAchievements = [
+  {
+    id: "a1",
+    title: "First Place - National Collegiate Hackathon",
+    date: "2023-05-20",
+    description: "Our team won first place for developing an innovative solution for sustainable urban mobility.",
+    image: "/images/achievement1.jpg",
+  },
+  {
+    id: "a2",
+    title: "Best Tech Club Award",
+    date: "2022-12-15",
+    description: "Recognized as the best technology club among all colleges in the region.",
+    image: "/images/achievement2.jpg",
+  },
+  {
+    id: "a3",
+    title: "Innovation Grant Recipient",
+    date: "2022-09-30",
+    description: "Received a $10,000 grant to develop technology solutions for local community challenges.",
+    image: "/images/achievement3.jpg",
+  },
+]
+
 const mockClubData = {
   id: "1",
   name: "Tech Innovators Club",
@@ -48,145 +116,67 @@ const mockClubData = {
   bannerImage: "/images/club-banner.jpg",
   logoImage: "/images/club-logo.jpg",
   category: "Technology",
-  foundedYear: "2018",
-  memberCount: 120,
+  foundedYear: null,
   socialLinks: {
     instagram: "https://instagram.com/techinnovators",
     twitter: "https://twitter.com/techinnovators",
     website: "https://techinnovators.edu",
-  },
-  members: [
-    {
-      id: "m1",
-      name: "Alex Johnson",
-      role: "President",
-      avatar: "/images/avatar1.jpg",
-      year: "Senior",
-      department: "Computer Science",
-    },
-    {
-      id: "m2",
-      name: "Samantha Lee",
-      role: "Vice President",
-      avatar: "/images/avatar2.jpg",
-      year: "Junior",
-      department: "Electrical Engineering",
-    },
-    {
-      id: "m3",
-      name: "David Chen",
-      role: "Secretary",
-      avatar: "/images/avatar3.jpg",
-      year: "Sophomore",
-      department: "Information Technology",
-    },
-    {
-      id: "m4",
-      name: "Emily Wilson",
-      role: "Treasurer",
-      avatar: "/images/avatar4.jpg",
-      year: "Senior",
-      department: "Computer Engineering",
-    },
-    {
-      id: "m5",
-      name: "Michael Brown",
-      role: "Event Coordinator",
-      avatar: "/images/avatar5.jpg",
-      year: "Junior",
-      department: "Data Science",
-    },
-  ],
-  events: [
-    {
-      id: "e1",
-      title: "Annual Hackathon 2023",
-      date: "2023-11-15",
-      time: "9:00 AM - 9:00 PM",
-      location: "Main Campus, Building A",
-      description: "A 12-hour coding competition where teams build innovative solutions to real-world problems.",
-      image: "/images/event1.jpg",
-      isUpcoming: true,
-    },
-    {
-      id: "e2",
-      title: "Workshop: Intro to AI",
-      date: "2023-10-25",
-      time: "3:00 PM - 5:00 PM",
-      location: "Tech Lab, Building B",
-      description: "Learn the basics of artificial intelligence and machine learning in this hands-on workshop.",
-      image: "/images/event2.jpg",
-      isUpcoming: true,
-    },
-    {
-      id: "e3",
-      title: "Tech Talk: Future of Web Development",
-      date: "2023-09-10",
-      time: "4:00 PM - 6:00 PM",
-      location: "Auditorium C",
-      description: "Industry experts discuss the latest trends and future of web development.",
-      image: "/images/event3.jpg",
-      isUpcoming: false,
-    },
-    {
-      id: "e4",
-      title: "Coding Bootcamp",
-      date: "2023-08-05",
-      time: "10:00 AM - 4:00 PM",
-      location: "Computer Lab",
-      description: "Intensive coding session for beginners to learn programming fundamentals.",
-      image: "/images/event4.jpg",
-      isUpcoming: false,
-    },
-  ],
-  achievements: [
-    {
-      id: "a1",
-      title: "First Place - National Collegiate Hackathon",
-      date: "2023-05-20",
-      description: "Our team won first place for developing an innovative solution for sustainable urban mobility.",
-      image: "/images/achievement1.jpg",
-    },
-    {
-      id: "a2",
-      title: "Best Tech Club Award",
-      date: "2022-12-15",
-      description: "Recognized as the best technology club among all colleges in the region.",
-      image: "/images/achievement2.jpg",
-    },
-    {
-      id: "a3",
-      title: "Innovation Grant Recipient",
-      date: "2022-09-30",
-      description: "Received a $10,000 grant to develop technology solutions for local community challenges.",
-      image: "/images/achievement3.jpg",
-    },
-  ],
+  }
 }
 
 export default function ClubPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { clubId } = useParams()
+  const {clubInfo} = useParams();
   const [club, setClub] = useState(null)
+  const [event, setEvents] = useState(null)
+  const [members, setMembers] = useState(null)
+  const [achievements, setAchievements] = useState(null)
+  const [membersCount, setMembersCount] = useState(0)
+
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState(0)
   
   useEffect(() => {
-    // In a real app, fetch the club data from API
-    async function fetchClubData() {
+    async function fetchMembers() {
+      setLoading(true)
+      try {
+        const clubId = location.state?.clubId;
+        const response = await axios.get(`/api/club-management/club-members/${clubId}`);
+
+          setMembers(response.data.MemberDetails)
+          setMembersCount(response.data.MemberDetails.length)
+      } catch (error) {
+        console.error("Error fetching club data:", error)
+        setLoading(false)
+      }
+    }
+
+    async function fetchAchievements() {
       setLoading(true)
       try {
         // Replace with actual API call
         const clubId = location.state?.clubId;
+        console.log("club info = ",location.state?.clubInfo);
         console.log(clubId);
-        const response = await axios.get(`/api/club-management/club-members/${clubId}`);
-        console.log(response.data);
-        setClub(response.data);
+        // const response = await axios.get(`/api/club-management/club-members/${clubId}`);
+        // console.log(response.data);
+        // setClub(response.data);
 
+          setAchievements(mockAchievements)
+      } catch (error) {
+        console.error("Error fetching club data:", error)
+        setLoading(false)
+      }
+    }
+
+    async function fetchClub() {
+      setLoading(true)
+      try {
         // Using mock data for now
         setTimeout(() => {
-          setClub(mockClubData)
+          setClub(location.state?.clubInfo)
           setLoading(false)
         }, 800)
       } catch (error) {
@@ -195,7 +185,22 @@ export default function ClubPage() {
       }
     }
 
-    fetchClubData()
+    function fetchEvent() {
+      setLoading(true)
+      try {
+          setLoading(false)
+          setEvents(mockEvents)
+      } catch (error) {
+        console.error("Error fetching club data: ", error)
+        setLoading(false)
+      }
+    }
+
+    
+    fetchEvent()
+    fetchMembers()
+    fetchClub()
+    fetchAchievements()
   }, [clubId])
 
   const handleTabChange = (event, newValue) => {
@@ -329,7 +334,7 @@ export default function ClubPage() {
                       />
                       <Chip
                         icon={<PeopleIcon fontSize="small" />}
-                        label={`${club.memberCount} Members`}
+                        label={`${membersCount} Members`}
                         size="small"
                         sx={{ backgroundColor: "rgba(20, 184, 166, 0.1)", color: "#14B8A6" }}
                       />
@@ -416,7 +421,7 @@ export default function ClubPage() {
                       </Typography>
                       <Typography variant="body1" paragraph>
                         Founded in {club.foundedYear}, the {club.name} has grown to become one of the most active clubs
-                        on campus with {club.memberCount} members. We are dedicated to fostering a community of
+                        on campus with {membersCount} members. We are dedicated to fostering a community of
                         like-minded individuals who are passionate about {club.category.toLowerCase()}.
                       </Typography>
                       <Typography variant="body1">
@@ -432,9 +437,9 @@ export default function ClubPage() {
                       <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: "#14B8A6" }}>
                         Upcoming Events
                       </Typography>
-                      {club.events.filter((event) => event.isUpcoming).length > 0 ? (
+                      {event.filter((event) => event.isUpcoming).length > 0 ? (
                         <List sx={{ p: 0 }}>
-                          {club.events
+                          {event
                             .filter((event) => event.isUpcoming)
                             .slice(0, 2)
                             .map((event) => (
@@ -487,7 +492,7 @@ export default function ClubPage() {
                           No upcoming events at the moment. Check back soon!
                         </Typography>
                       )}
-                      {club.events.filter((event) => event.isUpcoming).length > 2 && (
+                      {event.filter((event) => event.isUpcoming).length > 2 && (
                         <Button
                           sx={{
                             mt: 2,
@@ -513,17 +518,17 @@ export default function ClubPage() {
                         Leadership Team
                       </Typography>
                       <List sx={{ p: 0 }}>
-                        {club.members
+                        {members
                           .filter((member) =>
                             ["President", "Vice President", "Secretary", "Treasurer"].includes(member.role),
                           )
                           .map((member) => (
                             <ListItem key={member.id} sx={{ px: 0, py: 1.5 }}>
                               <ListItemAvatar>
-                                <Avatar src={member.avatar} />
+                                <Avatar src={null} />
                               </ListItemAvatar>
                               <ListItemText
-                                primary={member.name}
+                                primary={`${member.firstName} ${member.lastName}`}
                                 secondary={
                                   <Typography variant="body2" color="text.secondary">
                                     {member.role} • {member.department}
@@ -541,9 +546,9 @@ export default function ClubPage() {
                       <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: "#8B5CF6" }}>
                         Recent Achievements
                       </Typography>
-                      {club.achievements.length > 0 ? (
+                      {achievements.length > 0 ? (
                         <List sx={{ p: 0 }}>
-                          {club.achievements.slice(0, 2).map((achievement) => (
+                          {achievements.slice(0, 2).map((achievement) => (
                             <ListItem key={achievement.id} alignItems="flex-start" sx={{ px: 0, py: 2 }}>
                               <ListItemAvatar>
                                 <Avatar sx={{ backgroundColor: "rgba(139, 92, 246, 0.1)" }}>
@@ -575,7 +580,7 @@ export default function ClubPage() {
                           No achievements recorded yet.
                         </Typography>
                       )}
-                      {club.achievements.length > 2 && (
+                      {achievements.length > 2 && (
                         <Button
                           sx={{
                             mt: 2,
@@ -607,7 +612,7 @@ export default function ClubPage() {
                       </Typography>
                     </Box>
                     <Grid container spacing={3}>
-                      {club.members
+                      {members
                         .filter((member) =>
                           ["President", "Vice President", "Secretary", "Treasurer"].includes(member.role),
                         )
@@ -628,7 +633,7 @@ export default function ClubPage() {
                               }}
                             >
                               <Avatar
-                                src={member.avatar}
+                                src={null}
                                 sx={{
                                   width: 100,
                                   height: 100,
@@ -646,7 +651,7 @@ export default function ClubPage() {
                                 }}
                               />
                               <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                                {member.name}
+                              {`${member.firstName} ${member.lastName}`}
                               </Typography>
                               <Typography
                                 variant="subtitle2"
@@ -684,14 +689,14 @@ export default function ClubPage() {
                         All Members
                       </Typography>
                       <Chip
-                        label={`${club.memberCount} Total`}
+                        label={`${membersCount} Total`}
                         size="small"
                         sx={{ backgroundColor: "rgba(20, 184, 166, 0.1)", color: "#14B8A6" }}
                       />
                     </Box>
 
                     <Grid container spacing={2}>
-                      {club.members
+                      {members
                         .filter(
                           (member) => !["President", "Vice President", "Secretary", "Treasurer"].includes(member.role),
                         )
@@ -707,10 +712,10 @@ export default function ClubPage() {
                                 gap: 2,
                               }}
                             >
-                              <Avatar src={member.avatar} />
+                              <Avatar src={null} />
                               <Box>
                                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                                  {member.name}
+                                {`${member.firstName} ${member.lastName}`}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
                                   {member.role} • {member.year} Year
@@ -754,9 +759,9 @@ export default function ClubPage() {
                       Upcoming Events
                     </Typography>
 
-                    {club.events.filter((event) => event.isUpcoming).length > 0 ? (
+                    {event.filter((event) => event.isUpcoming).length > 0 ? (
                       <Grid container spacing={3}>
-                        {club.events
+                        {event
                           .filter((event) => event.isUpcoming)
                           .map((event) => (
                             <Grid item xs={12} sm={6} md={4} key={event.id}>
@@ -847,9 +852,9 @@ export default function ClubPage() {
                       Past Events
                     </Typography>
 
-                    {club.events.filter((event) => !event.isUpcoming).length > 0 ? (
+                    {event.filter((event) => !event.isUpcoming).length > 0 ? (
                       <Grid container spacing={3}>
-                        {club.events
+                        {event
                           .filter((event) => !event.isUpcoming)
                           .map((event) => (
                             <Grid item xs={12} sm={6} key={event.id}>
@@ -917,9 +922,9 @@ export default function ClubPage() {
                       Club Achievements
                     </Typography>
 
-                    {club.achievements.length > 0 ? (
+                    {achievements.length > 0 ? (
                       <Grid container spacing={3}>
-                        {club.achievements.map((achievement) => (
+                        {achievements.map((achievement) => (
                           <Grid item xs={12} key={achievement.id}>
                             <Card
                               sx={{
