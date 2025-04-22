@@ -133,7 +133,10 @@ public class ClubManagementController {
 //    @PatchMapping("/clubs/:id") //Update club details
 
     @DeleteMapping("/clubs") //Delete a club
-    public ResponseEntity<String> deleteClub(@RequestBody UUID userId, UUID clubId){
+    public ResponseEntity<String> deleteClub(@RequestHeader("role") String role, @RequestBody UUID userId, UUID clubId){
+        if(!Objects.equals(role, "Club_President")){
+            return ResponseEntity.ok("Your Role is not eligible to perform the operation");
+        }
         return ResponseEntity.ok(clubService.deleteClub(userId, clubId));
     }
 
