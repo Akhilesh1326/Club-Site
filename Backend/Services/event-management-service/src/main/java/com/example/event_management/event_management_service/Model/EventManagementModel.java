@@ -53,6 +53,14 @@ public class EventManagementModel {
         this.updatedAt = LocalDateTime.now();
     }
 
+
+    public void setId(UUID id){
+        this.id = id;
+    }
+    public UUID getId(){
+        return this.id;
+    }
+
     public void setTitle (String title){
         this.title  = title;
     }
@@ -70,7 +78,7 @@ public class EventManagementModel {
     }
 
     public enum EventType{
-        College_Level,
+        Collage_Level,
         Global_Level
     }
 
