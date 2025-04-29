@@ -40,6 +40,10 @@ public class EventManagementService {
         return eventManagementRepo.findAll();
     }
 
+    public List<Object> getGlobalEvents(String level) {
+        return eventManagementRepo.findByEventType(convertToEventType(level));
+    }
+
 
 
     private EventManagementModel.Category convertToCategory(String category){
@@ -67,6 +71,18 @@ public class EventManagementService {
     private Integer convertToInteger(String val){
         return Integer.parseInt(val);
     }
+
+    public String deleteEventById(UUID eventId) {
+        boolean isDelete = eventManagementRepo.deleteEventById(eventId);
+        if(isDelete){
+            return "Success";
+        }
+        return "Failed";
+    }
+
+//    public List<EventManagementModel> getEventById(UUID eventId) {
+//        return eventManagementRepo.getEventByEventId(eventId);
+//    }
 
 
 //    public List<EventManagementModel> getEventByCategory(String category) {
