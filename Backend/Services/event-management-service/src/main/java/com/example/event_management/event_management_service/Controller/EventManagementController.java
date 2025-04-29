@@ -9,14 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/eventManagement")
+@RequestMapping("/api/event-management")
 public class EventManagementController {
     private final EventManagementService eventManagementService;
     @Autowired
@@ -28,9 +25,14 @@ public class EventManagementController {
     }
 
     @PostMapping("/create-event")
-    public Map<String, Object> createEvent(@RequestHeader("userId") String userId,  @RequestBody EventManagementDTO eventManagementDTO){
-        System.out.println("event name = "+eventManagementDTO);
+    public Map<String, Object> createEvent(@RequestHeader("userId") String userId, @RequestHeader("role") String role,  @RequestBody EventManagementDTO eventManagementDTO){
+        System.out.println("role = "+role);
+        System.out.println("called event"+eventManagementDTO.getCategory());
         Map<String, Object> res = new HashMap<>();
+//        if(Objects.equals(role, "Club_President") || Objects.equals(role, "Event_Organizer") ){
+//            res.put("Status", "Your role is not eligible for this operation");
+//            return res;
+//        }
         if(eventManagementDTO.getTitle() == null || eventManagementDTO.getTitle().trim().isEmpty()){
             res.put("Status", "No Title of event is given");
             return res;
@@ -69,6 +71,7 @@ public class EventManagementController {
         }
         EventManagementModel newEvent = eventManagementService.createEvent(UUID.fromString(userId), eventManagementDTO);
         res.put("Status", "Success");
+        System.out.println("event is created");
         return res;
     }
 
@@ -77,11 +80,35 @@ public class EventManagementController {
         List<EventManagementModel> events = eventManagementService.getAllEvents();
         return ResponseEntity.ok(events);
     }
+//    @GetMapping("/events/{eventId}")
+//    public ResponseEntity<List<EventManagementModel>> getEventById(@RequestParam String eventId){
+//        List<EventManagementModel> events = eventManagementService.getEventById(UUID.fromString(eventId));
+//        return ResponseEntity.ok(events);
+//    }
 
 
 //    @GetMapping("/get-event-by-category/{category}")
 //    public List<EventManagementModel> getEventByCategory(@RequestParam String category){
 //        return ResponseEntity.ok(eventManagementService.getEventByCategory(category));
 //    }
+
+    @GetMapping("/get-events-by-level")
+    public List<Object> getEventsByEventType(@RequestParam String level){
+        List<Object> globalEvent = eventManagementService.getGlobalEvents(level);
+        List<Object> list = new ArrayList<>();
+        if(globalEvent.isEmpty()){
+            list.add("No Data Found");
+        }
+        return globalEvent;
+    }
+
+    @DeleteMapping("/delete-event")
+    public String deleteEvent(@RequestHeader("role") String role, @RequestParam String eventId){
+        if(!Objects.equals(role, "Club_President")){
+            return "Your Role is not eligible to perform the operation";
+        }
+        return eventManagementService.deleteEventById(UUID.fromString(eventId));
+    }
+
 
 }
