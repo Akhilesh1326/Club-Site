@@ -18,6 +18,10 @@ public class EventParticipantsModel {
     @Column(nullable = false)
     private UUID clubId;
 
+    @Column(nullable = false)
+    private UUID eventId;
+
+
 
     public UUID getId(){
         return this.id;
@@ -34,6 +38,10 @@ public class EventParticipantsModel {
     }
     public UUID getClubId(){
         return this.clubId;
+    }
+
+    public void setEventId(UUID eventId){
+        this.eventId = eventId;
     }
 
 
