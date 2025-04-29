@@ -11,4 +11,9 @@ import java.util.UUID;
 public interface EventManagementRepo extends JpaRepository<EventManagementModel, UUID> {
     List<EventManagementModel> findByClubId(UUID clubId);
 
+    List<Object> findByEventType(EventManagementModel.EventType level);
+
+    boolean deleteEventById(UUID eventId);
+
+//    List<EventManagementModel> getEventByEventId(UUID eventId);
 }
