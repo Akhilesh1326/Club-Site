@@ -9,4 +9,5 @@ import java.util.UUID;
 @Repository
 public interface EventParticipantsRepo extends JpaRepository<EventParticipantsModel, UUID> {
 
+    boolean deleteByUserId(UUID userId);
 }
