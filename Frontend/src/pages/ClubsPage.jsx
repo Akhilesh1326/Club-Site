@@ -38,6 +38,39 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime"
 import { useNavigate, useLocation } from "react-router-dom"
 import axios from "axios"
 
+// hierarchy of club's possilbe positions
+
+const roleHierarchy = {
+  Core_Positions: [
+    "President",
+    "VicePresident",
+    "Secretary",
+    "Treasurer",
+  ],
+  Management_Event_Specific_Roles: [
+    "Event_Coordinator",
+    "Public_Relations_Officer",
+    "Marketing_Head",
+    "Sponsorship_Coordinator",
+  ],
+  Technical_Creative_Roles: [
+    "Technical_Lead",
+    "Content_Writer",
+    "Design_Head",
+    "Webmaster",
+  ],
+  Membership_Outreach_Roles: [
+    "Membership_Coordinator",
+    "Community_Manager",
+    "Volunteer_Coordinator",
+  ],
+  Specialized_Roles: [
+    "Research_Head",
+    "Sports_Coordinator",
+    "Cultural_Head",
+  ],
+};
+
 
 // Mock data (replace with actual API call)
 const mockEvents = [
@@ -138,6 +171,28 @@ export default function ClubPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState(0)
   
+
+  const [showJoinClubMode, setShowJoinClubMode] = useState(false);
+  const [selectRole, setSelectRole] = useState("");
+
+  async function handleJoinClubSubmit(){
+    if (!selectRole) return alert("Please select a role.");
+    try {
+      // Replace with your API endpoint
+      console.log("user id = ",clubId)
+      await axios.post("/api/club-management/clubs/add-members/", {
+        clubId: location.state?.clubId, 
+        role: selectRole 
+      });
+      alert(`Successfully applied as ${selectRole}`);
+      setShowJoinClubMode(false);
+      setSelectRole(""); 
+    } catch (error) {
+      alert("Something went wrong.");
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     async function fetchMembers() {
       setLoading(true)
@@ -152,6 +207,8 @@ export default function ClubPage() {
         setLoading(false)
       }
     }
+
+
 
     async function fetchAchievements() {
       setLoading(true)
@@ -356,6 +413,7 @@ export default function ClubPage() {
                           background: "linear-gradient(90deg, #2563EB 0%, #0D9488 100%)",
                         },
                       }}
+                      onClick={()=>setShowJoinClubMode(true)}
                     >
                       Join Club
                     </Button>
@@ -990,7 +1048,50 @@ export default function ClubPage() {
           </Box>
         </Box>
       </Box>
+      {showJoinClubMode && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-md p-6 relative">
+            <h2 className="text-xl font-bold mb-4">Select a Role</h2>
 
+            <div className="space-y-2 max-h-80 overflow-y-auto">
+              {Object.entries(roleHierarchy).map(([hierarchy, roles]) => (
+                <div key={hierarchy}>
+                  <p className="font-semibold text-gray-700">{hierarchy.replace(/_/g, " ")}</p>
+                  <div className="grid grid-cols-2 gap-2 mt-1">
+                    {roles.map((role) => (
+                      <button
+                        key={role}
+                        onClick={() => setSelectRole(role)}
+                        className={`border px-2 py-1 rounded text-sm ${
+                          selectRole === role
+                            ? "bg-blue-500 text-white"
+                            : "bg-gray-100 hover:bg-gray-200"
+                        }`}
+                      >
+                        {role.replace(/_/g, " ")}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              </div>
+              <div className="flex justify-end mt-6 space-x-2">
+              <button
+                onClick={() => setShowJoinClubMode(false)}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleJoinClubSubmit}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Submit
+              </button>
+            </div>
+            </div>
+        </div>
+      )}
       <HomeFooter />
     </div>
   )
