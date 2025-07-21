@@ -70,7 +70,8 @@ public class AuthUserService {
         users.setCity(authUserDTO.getCity());
         users.setState(authUserDTO.getState());
         users.setDepartment(authUserDTO.getDepartment());
-        users.setYear(authUserDTO.getYear());
+        users.setYear(Integer.valueOf(authUserDTO.getYear()));
+
 
         authUserRepository.save(users);
     }
