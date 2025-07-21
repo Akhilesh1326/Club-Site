@@ -24,7 +24,7 @@ export default function FollowedClubs() {
   useEffect(() => {
     async function getFollowClubs() {
       try {
-        const response = await axios.get("/api/club-management/clubs");
+        const response = await axios.get("/api/club-management/get-followed-clubs");
         const updatedClubs = response.data.map((club) => ({
           ...club,
           color: getRandomBorderColor(),
