@@ -9,12 +9,14 @@ import com.example.club_management.club_management_service.Repo.ClubMemberRepo;
 import com.example.club_management.club_management_service.Services.clubManagementService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.core.convert.ConverterNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -87,9 +89,49 @@ public class ClubManagementController {
 
     @GetMapping("/clubs") //Fetch all clubs
     public ResponseEntity<List<ClubModel>> getAllClubs(){
-        System.out.println("hello");
+        System.out.println("hello from /clubs");
         List<ClubModel> clubs = clubService.getAllClubs();
         return ResponseEntity.ok(clubs);
+    }
+
+    @GetMapping("/get-followed-clubs")
+    public ResponseEntity<Object> getAllClubFollowedBySingleUser(@RequestHeader("userId") String userId) {
+        System.out.println("Received userId = " + userId);
+        UUID uuidUserId;
+
+        // Step 1: Validate UUID
+        try {
+            uuidUserId = UUID.fromString(userId);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid UUID format for userId.");
+        }
+        System.out.println("hello1");
+        // Step 2: Fetch all club memberships of the user
+        List<ClubMemberModel> memberships = clubMemberRepo.findAllByUserId(uuidUserId);
+        if (memberships.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No clubs followed by the given userId");
+        }
+        System.out.println("hello2");
+
+        // Step 3: Extract clubIds and fetch club details
+        List<Object> clubDetails = memberships.stream()
+                .map(ClubMemberModel::getClubId) // already UUID
+                .map(clubId -> clubManagementRepo.findClubById(clubId)) // use UUID directly
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
+
+        System.out.println("hello3");
+
+
+        if (clubDetails.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No club details found for the followed clubs.");
+        }
+
+        return ResponseEntity.ok(clubDetails);
     }
 
     @GetMapping("/get-greet")
@@ -154,31 +196,30 @@ public class ClubManagementController {
 //    ##################### Member route controller ############################
 
 
-    @PostMapping("clubs/add-members/") //Add a member to a club
-    public ResponseEntity<Map<String, Object>> addNewMemberToClub(@RequestBody ClubMemberDTO clubMemberDTO){
-        System.out.println("User id "+ clubMemberDTO.getUserId());
-        System.out.println("Club id "+ clubMemberDTO.getClubId());
-        System.out.println("Role "+ clubMemberDTO.getRole());
+    @PostMapping("/clubs/add-members/") //Add a member to a club
+    public ResponseEntity<Map<String, Object>> addNewMemberToClub(@RequestHeader("userId") String userId, @RequestBody ClubMemberDTO clubMemberDTO){
+        UUID clubId = clubMemberDTO.getClubId();
+        String role = clubMemberDTO.getRole();
+        System.out.println("User id "+ userId);
+        System.out.println("Club id "+ clubId);
+        System.out.println("Role "+ role);
 //        System.out.println("Hierarchy "+ clubMemberDTO.getHierarchy());
 
         Map<String, Object> res = new HashMap<>();
-        if(clubMemberDTO.getClubId() == null){
+        if(clubId == null){
             res.put("Error ", "Club Id is required");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
-        if(clubMemberDTO.getUserId() == null){
+        if(userId == null){
             res.put("Error ", "User Id is required");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
-        if(clubMemberDTO.getRole() == null || clubMemberDTO.getRole().trim().isEmpty()){
+        if(role == null){
             res.put("Error ", "Role is required");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
-//        if(clubMemberDTO.getHierarchy() == null || clubMemberDTO.getHierarchy().trim().isEmpty()){
-//            res.put("Error ", "Hierarchy of role is required");
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
-//        }
-        ClubMemberModel newClubMember = clubService.addClubMembers(clubMemberDTO);
+
+        ClubMemberModel newClubMember = clubService.addClubMembers(userId, clubId, role);
         res.put("Id ", newClubMember.getId());
         res.put("User Id",newClubMember.getUserId());
         res.put("Club Id",newClubMember.getClubId());
