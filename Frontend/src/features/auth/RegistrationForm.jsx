@@ -16,6 +16,7 @@ import {
   Select,
   Box,
   Avatar,
+  Alert,
 } from "@mui/material"
 import { Visibility, VisibilityOff, CloudUpload } from "@mui/icons-material"
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
@@ -44,6 +45,8 @@ function RegistrationForm() {
 
   const [showPassword, setShowPassword] = useState(false)
   const [previewImage, setPreviewImage] = useState(null)
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -51,6 +54,8 @@ function RegistrationForm() {
       ...formData,
       [name]: value,
     })
+    // Clear error when user starts typing
+    if (error) setError("")
   }
 
   const handleDateChange = (date) => {
@@ -58,62 +63,161 @@ function RegistrationForm() {
       ...formData,
       DOB: date,
     })
+    if (error) setError("")
   }
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-
-      // Create a temporary URL for preview
-      const fileUrl = URL.createObjectURL(file)
-      setPreviewImage(fileUrl)
-      setFormData({
-        ...formData,
-        profile_picture_url: fileUrl,
-      })
+      const file = e.target.files[0];
+      
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        setError("File too large. Maximum size is 5MB.");
+        return;
+      }
+      
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        setError("Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.");
+        return;
+      }
+      
+      const fileUrl = URL.createObjectURL(file);
+      setPreviewImage(fileUrl);
+      setFormData((prev) => ({
+        ...prev,
+        profile_picture_file: file,
+      }));
+      
+      if (error) setError("");
     }
+  }
+
+  const validateForm = () => {
+    // Basic validation
+    if (!formData.userName.trim()) {
+      setError("Username is required");
+      return false;
+    }
+    if (!formData.email.trim()) {
+      setError("Email is required");
+      return false;
+    }
+    if (!formData.password.trim()) {
+      setError("Password is required");
+      return false;
+    }
+    if (!formData.firstName.trim()) {
+      setError("First name is required");
+      return false;
+    }
+    if (!formData.lastName.trim()) {
+      setError("Last name is required");
+      return false;
+    }
+    if (!formData.DOB) {
+      setError("Date of birth is required");
+      return false;
+    }
+    if (!formData.collegeOrUniversityName.trim()) {
+      setError("College/University name is required");
+      return false;
+    }
+    if (!formData.role) {
+      setError("Role is required");
+      return false;
+    }
+    if (!formData.phoneNumber.trim()) {
+      setError("Phone number is required");
+      return false;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Please enter a valid email address");
+      return false;
+    }
+
+    // Password validation (minimum 6 characters)
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return false;
+    }
+
+    // Phone number validation (basic)
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(formData.phoneNumber.replace(/\D/g, ''))) {
+      setError("Please enter a valid 10-digit phone number");
+      return false;
+    }
+
+    return true;
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const formattedData = {
-      ...formData,
-      DOB: formData.DOB ? dayjs(formData.DOB).format("DD-MM-YYYY") : "",
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
     }
-    console.log("Form submitted:", formattedData)
+
+    setLoading(true);
+    setError("");
 
     try {
-      const response = await axios.post(
-        "/api/auth-service/register",
-        {
-          userName: formData.userName,
-          email: formData.email,
-          password: formData.password,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          DOB: formattedData.DOB,
-          collegeOrUniversityName: formData.collegeOrUniversityName,
-          role: formData.role,
-          phoneNumber: formData.phoneNumber,
-          profile_picture_url: formData.profile_picture_url,
-          state: formData.state,
-          city: formData.city,
-          department: formData.department,
-          year: formData.year,
-        },
-        {
-          withCredentials: true,
-        },
-      )
+      const formattedDOB = formData.DOB ? dayjs(formData.DOB).format("DD-MM-YYYY") : "";
+      
+      const form = new FormData();
+      form.append("userName", formData.userName.trim());
+      form.append("email", formData.email.trim());
+      form.append("password", formData.password);
+      form.append("firstName", formData.firstName.trim());
+      form.append("lastName", formData.lastName.trim());
+      form.append("DOB", formattedDOB);
+      form.append("collegeOrUniversityName", formData.collegeOrUniversityName.trim());
+      form.append("role", formData.role);
+      form.append("phoneNumber", formData.phoneNumber.trim());
+      form.append("state", formData.state.trim());
+      form.append("city", formData.city.trim());
+      form.append("department", formData.department.trim());
+      form.append("year", formData.year);
+      
+      if (formData.profile_picture_file) {
+        form.append("profile_picture", formData.profile_picture_file);
+      }
 
-      console.log("resp data = ", response.data)
-      if (response.data.status == "Success" || response.data.status == "success") {
-        navigate("/home")
+      const response = await axios.post("/api/auth-service/register", form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      });
+
+      console.log("Registration response:", response.data);
+      
+      if (response.data.status === "Success" || response.data.status === "success") {
+        navigate("/home");
+      } else {
+        setError(response.data.message || "Registration failed. Please try again.");
       }
     } catch (error) {
-      console.log("Registration failed = ", error.response?.data || error)
+      console.error("Registration failed:", error);
+      
+      if (error.response?.data?.error) {
+        setError(error.response.data.error);
+      } else if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else if (error.message) {
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        setError("Registration failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   const roles = ["Fresher", "Club_Member", "Club_President", "General_Participant", "Event_Organizer"]
 
@@ -145,6 +249,12 @@ function RegistrationForm() {
           Fill in your details to register a new account.
         </Typography>
 
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             {/* First Name & Last Name */}
@@ -157,6 +267,7 @@ function RegistrationForm() {
                 onChange={handleInputChange}
                 required
                 variant="outlined"
+                disabled={loading}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -168,6 +279,7 @@ function RegistrationForm() {
                 onChange={handleInputChange}
                 required
                 variant="outlined"
+                disabled={loading}
               />
             </Grid>
 
@@ -181,6 +293,7 @@ function RegistrationForm() {
                 onChange={handleInputChange}
                 required
                 variant="outlined"
+                disabled={loading}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -193,6 +306,7 @@ function RegistrationForm() {
                 onChange={handleInputChange}
                 required
                 variant="outlined"
+                disabled={loading}
               />
             </Grid>
 
@@ -207,10 +321,16 @@ function RegistrationForm() {
                 onChange={handleInputChange}
                 required
                 variant="outlined"
+                disabled={loading}
+                helperText="Minimum 6 characters"
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      <IconButton 
+                        onClick={() => setShowPassword(!showPassword)} 
+                        edge="end"
+                        disabled={loading}
+                      >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
@@ -227,6 +347,8 @@ function RegistrationForm() {
                   value={formData.DOB}
                   onChange={handleDateChange}
                   format="DD-MM-YYYY"
+                  maxDate={dayjs().subtract(13, 'year')} // Minimum age 13
+                  disabled={loading}
                   slotProps={{
                     textField: { fullWidth: true, required: true },
                   }}
@@ -244,6 +366,7 @@ function RegistrationForm() {
                 onChange={handleInputChange}
                 required
                 variant="outlined"
+                disabled={loading}
               />
             </Grid>
 
@@ -257,6 +380,8 @@ function RegistrationForm() {
                 onChange={handleInputChange}
                 required
                 variant="outlined"
+                disabled={loading}
+                helperText="10-digit phone number"
               />
             </Grid>
 
@@ -271,6 +396,7 @@ function RegistrationForm() {
                   value={formData.role}
                   label="Role"
                   onChange={handleInputChange}
+                  disabled={loading}
                 >
                   {roles.map((role) => (
                     <MenuItem key={role} value={role}>
@@ -290,6 +416,7 @@ function RegistrationForm() {
                 value={formData.state}
                 onChange={handleInputChange}
                 variant="outlined"
+                disabled={loading}
               />
             </Grid>
 
@@ -302,6 +429,7 @@ function RegistrationForm() {
                 value={formData.city}
                 onChange={handleInputChange}
                 variant="outlined"
+                disabled={loading}
               />
             </Grid>
 
@@ -314,6 +442,7 @@ function RegistrationForm() {
                 value={formData.department}
                 onChange={handleInputChange}
                 variant="outlined"
+                disabled={loading}
               />
             </Grid>
 
@@ -327,14 +456,16 @@ function RegistrationForm() {
                 value={formData.year}
                 onChange={handleInputChange}
                 variant="outlined"
-                inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                disabled={loading}
+                inputProps={{ inputMode: "numeric", pattern: "[0-9]*", min: 1, max: 8 }}
+                helperText="Enter your current year of study"
               />
             </Grid>
 
             {/* Profile Picture */}
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Profile Picture
+                Profile Picture (Optional)
               </Typography>
               <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} sm={6} sx={{ display: "flex", justifyContent: "center" }}>
@@ -368,12 +499,24 @@ function RegistrationForm() {
                   </Box>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Button variant="outlined" component="label" startIcon={<CloudUpload />} sx={{ mb: 1 }} fullWidth>
+                  <Button 
+                    variant="outlined" 
+                    component="label" 
+                    startIcon={<CloudUpload />} 
+                    sx={{ mb: 1 }} 
+                    fullWidth
+                    disabled={loading}
+                  >
                     Upload Image
-                    <input type="file" hidden accept="image/*" onChange={handleFileChange} />
+                    <input 
+                      type="file" 
+                      hidden 
+                      accept="image/jpeg,image/png,image/gif,image/webp" 
+                      onChange={handleFileChange} 
+                    />
                   </Button>
                   <Typography variant="caption" color="text.secondary">
-                    Recommended: Square image, JPG or PNG format
+                    Max 5MB. JPEG, PNG, GIF, or WebP format.
                   </Typography>
                 </Grid>
               </Grid>
@@ -385,6 +528,7 @@ function RegistrationForm() {
                 type="submit"
                 fullWidth
                 variant="contained"
+                disabled={loading}
                 sx={{
                   mt: 2,
                   py: 1.5,
@@ -392,9 +536,12 @@ function RegistrationForm() {
                   "&:hover": {
                     background: "linear-gradient(to right, #2563EB, #0D9488)",
                   },
+                  "&:disabled": {
+                    background: "#cccccc",
+                  },
                 }}
               >
-                Register Account
+                {loading ? "Creating Account..." : "Register Account"}
               </Button>
             </Grid>
           </Grid>
