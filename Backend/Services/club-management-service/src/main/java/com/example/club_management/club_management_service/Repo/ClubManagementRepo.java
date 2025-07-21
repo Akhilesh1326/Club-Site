@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import com.example.club_management.club_management_service.Model.ClubModel;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,4 +17,7 @@ public interface ClubManagementRepo extends JpaRepository<ClubModel, String> {
 
 
     void deleteByIdAndUserId(UUID clubId, UUID userId);
+
+    List<ClubModel> getClubByUserId(UUID userId);
+
 }
