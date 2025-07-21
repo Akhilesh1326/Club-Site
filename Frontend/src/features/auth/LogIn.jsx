@@ -69,7 +69,7 @@ const SignIn = () => {
 
       // Handle successful login
       console.log("Login Successful:", response.data);
-      if (response.data.includes("Success")) {
+      if (response.data.status == "Success") { 
         navigate("/home")
       }
       else {
