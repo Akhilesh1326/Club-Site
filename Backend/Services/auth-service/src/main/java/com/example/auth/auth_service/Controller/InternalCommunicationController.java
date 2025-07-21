@@ -36,4 +36,9 @@ public class InternalCommunicationController {
 
     }
 
+//    @PutMapping("/update-role")
+//    public updateRole(@RequestBody UUID userId){
+//
+//    }
+
 }
